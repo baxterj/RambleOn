@@ -1,0 +1,49 @@
+
+<script type="text/javascript" src="assets/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+
+<!DOCTYPE html> 
+<html>
+<meta charset="UTF-8">
+<head> 
+	<title>Welcome to RambleOn</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
+	<link rel="stylesheet" href="assets/css/core.css" />
+	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
+	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-mobile-config.js"></script>
+	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyA1Oz8ZnLZ_mfkby54M_sdRzh8EAfAyRNA&sensor=true">
+	</script>
+	<script src="assets/js/utilities.js"></script>
+
+	<!--map page assets-->
+	<link rel="stylesheet" href="assets/css/map_core.css" />
+	<script src="assets/js/map_core.js"></script>
+	<script src="assets/js/map_draw_route.js"></script>
+	<!--end map page assets-->
+</head> 
+<body onload="initialize();"> 
+
+
+
+<div data-role="page">
+
+	<div data-role="header" id="menu_header">
+		<h1>My Title</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<div id="map_canvas"></div>	
+	</div><!-- /content -->
+
+	<div data-role="footer" id="menu_footer">
+		<h1>My Footer</h1>
+	</div><!-- /header -->
+</div><!-- /page -->
+
+</body>
+</html>
