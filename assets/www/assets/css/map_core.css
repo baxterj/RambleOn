@@ -1,3 +1,11 @@
 .ui-content{
 	padding: 0;
 }
+
+.modeSelect{
+	position:absolute;
+	bottom:40px;
+	left:20px;
+	display: none;
+
+}

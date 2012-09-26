@@ -6,3 +6,10 @@ div, a, img{
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+.f_left{
+	float:left;
+}
+
+.f_right{
+	float: right;
+}

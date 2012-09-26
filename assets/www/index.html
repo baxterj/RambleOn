@@ -26,7 +26,7 @@
 	<script src="assets/js/map_draw_route.js"></script>
 	<!--end map page assets-->
 </head> 
-<body onload="initialize();"> 
+<body onload="initialize(); initDrawMode();"> 
 
 
 
@@ -40,9 +40,24 @@
 		<div id="map_canvas"></div>	
 	</div><!-- /content -->
 
-	<div data-role="footer" id="menu_footer">
-		<h1>My Footer</h1>
-	</div><!-- /header -->
+	<div class="modeSelect">
+		<div data-role="controlgroup">
+			<a href="#" onclick="swapDrawMode(DRAWTYPES.MARKER);" data-role="button" data-icon="star">Add Points</a>
+			<a href="#" onclick="swapDrawMode(DRAWTYPES.REMOVER);" data-role="button" data-icon="delete">Delete Points</a>
+			<a href="#" onclick="swapDrawMode(DRAWTYPES.MOVER);" data-role="button" data-icon="grid">Move Points</a>
+		</div>
+	</div>
+
+	<div data-role="footer" id="menu_footer"  class="ui-bar">
+		<div data-role="controlgroup" data-type="horizontal" class="f_left">
+			<a href="#" onclick="toggleModeSelect();" data-role="button" data-icon="star" class="modebutton">Add Points</a>
+		</div>
+		<div data-role="controlgroup" data-type="horizontal" class="f_right">
+			<a href="#" onclick="setMapZoom(false);" data-role="button" data-icon="plus">In</a>
+			<a href="#" onclick="setMapZoom(true);" data-role="button" data-icon="minus">Out</a>
+		</div>
+	</div>
+	</div><!-- /footer -->
 </div><!-- /page -->
 
 </body>

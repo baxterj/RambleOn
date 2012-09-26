@@ -1,11 +1,16 @@
 var map;
 var mapZoom = 12;
 
+$(document).ready(function(){
+	$('.footer_button').button();
+});
+
+
 function initialize(){
 	var mapOptions = {
       center: new google.maps.LatLng(50.848115, -0.11364),
       zoom: mapZoom,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
       rotateControl: true
     };
 
@@ -13,13 +18,10 @@ function initialize(){
         mapOptions);
 
 
-
-
-
 }
 
-function setMapZoom(out){
-	if(out){
+function setMapZoom(zoomout){
+	if(zoomout){
 		map.setZoom(--mapZoom);
 	}else{
 		map.setZoom(++mapZoom);
