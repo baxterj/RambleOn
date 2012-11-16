@@ -4,4 +4,5 @@ $( document ).bind( "mobileinit", function() {
 	$.mobile.allowCrossDomainPages = true;
 	$.mobile.selectmenu.prototype.options.nativeMenu = false;
 	$.mobile.buttonMarkup.hoverDelay = 1;
+	$.ajaxEnabled = false;
 	});

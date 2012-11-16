@@ -11,9 +11,7 @@
 	<script src="assets/js/jquery-mobile-config.js"></script>
 	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
 
-	<script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyA1Oz8ZnLZ_mfkby54M_sdRzh8EAfAyRNA&sensor=true">
-	</script>
+	
 	<script src="assets/js/utilities.js"></script>
 
 	<!--map page assets-->
@@ -22,7 +20,7 @@
 	<script src="assets/js/map_draw_route.js"></script>
 	<!--end map page assets-->
 </head> 
-<body onload="initialize(); initDrawMode();"> 
+<body> 
 
 
 
@@ -33,26 +31,41 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<div id="map_canvas"></div>	
+			Username: <input type="text" name="user" id="loginUser"><br />
+Password: <input type="password" name="pass" id="loginPass">
+<button onClick="sendData();" name="Send">Send Data</Button>
+
+<!--a href="#" onClick="sendData();">Send Data</a-->
+
+<script type="text/javascript">
+function sendData(){
+	//var data = JSON.stringify({
+	//	"user": $('#loginUser').val(),
+	//	"passw": $('#loginPass').val(),
+	//});
+	var data = 'user=' + $('#loginUser').val() + '&passw=' + $('#loginPass').val()
+	alert('sending')
+	$.ajax({
+		url: 'http://www.rambleonline.com/api/v1/login/?format=json',
+		type: 'GET',
+		contentType: 'application/json',
+		data: data,
+		dataType: 'json',
+		crossDomain: true,
+		processData: false,
+		success: function(data, status, jqXHR) {
+			alert(data.objects[0].key)
+		}
+	})
+
+}
+</script>
 	</div><!-- /content -->
 
-	<div class="modeSelect">
-		<div data-role="controlgroup">
-			<a href="#" onclick="swapDrawMode(DRAWTYPES.MARKER);" data-role="button" data-icon="star">Add Points</a>
-			<a href="#" onclick="swapDrawMode(DRAWTYPES.REMOVER);" data-role="button" data-icon="delete">Delete Points</a>
-			<a href="#" onclick="swapDrawMode(DRAWTYPES.MOVER);" data-role="button" data-icon="grid">Move Points</a>
-		</div>
-	</div>
+	
 
 	<div data-role="footer" id="menu_footer"  class="ui-bar">
-		<div data-role="controlgroup" data-type="horizontal" class="f_left">
-			<a href="#" onclick="toggleModeSelect();" data-role="button" data-icon="star" class="modebutton">Add Points</a>
-		</div>
-		<div data-role="controlgroup" data-type="horizontal" class="f_right">
-			<a href="#" onclick="setMapZoom(false);" data-role="button" data-icon="plus">In</a>
-			<a href="#" onclick="setMapZoom(true);" data-role="button" data-icon="minus">Out</a>
-		</div>
-	</div>
+		
 	</div><!-- /footer -->
 </div><!-- /page -->
 
