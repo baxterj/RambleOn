@@ -31,34 +31,44 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-			Username: <input type="text" name="user" id="loginUser"><br />
-Password: <input type="password" name="pass" id="loginPass">
-<button onClick="sendData();" name="Send">Send Data</Button>
+		
+		Username: <input type="text" name="user" id="loginUser"><br />
+		Email: <input type="email" name="email" id="loginEmail"><br />
+		Password: <input type="password" name="password" id="loginPass">
+		<button onClick="sendData();" name="Send">Send Data</Button>
 
-<!--a href="#" onClick="sendData();">Send Data</a-->
+		<p id="message">
 
+		</p>
 <script type="text/javascript">
 function sendData(){
-	//var data = JSON.stringify({
-	//	"user": $('#loginUser').val(),
-	//	"passw": $('#loginPass').val(),
-	//});
-	var data = 'user=' + $('#loginUser').val() + '&passw=' + $('#loginPass').val()
-	alert('sending')
+	var data = JSON.stringify({
+		"user": $('#loginUser').val(),
+		"email": $('#loginEmail').val(),
+		"passw": $('#loginPass').val()
+	});
+
 	$.ajax({
-		url: 'http://www.rambleonline.com/api/v1/login/?format=json',
-		type: 'GET',
+		url: 'http://www.rambleonline.com/api/v1/register/',
+		type: 'POST',
 		contentType: 'application/json',
 		data: data,
 		dataType: 'json',
 		crossDomain: true,
 		processData: false,
 		success: function(data, status, jqXHR) {
-			alert(data.objects[0].key)
+			$('#message').html(data.key)
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			$('#message').html(jQuery.parseJSON(jqXHR.responseText).error_message)
 		}
 	})
 
 }
+
+
+
+
 </script>
 	</div><!-- /content -->
 
