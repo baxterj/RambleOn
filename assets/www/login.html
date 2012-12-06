@@ -1,0 +1,51 @@
+<!DOCTYPE html> 
+<html>
+<meta charset="UTF-8">
+<head> 
+	<title>RambleOnline - Login</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
+	<link rel="stylesheet" href="assets/css/core.css" />
+	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
+	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-mobile-config.js"></script>
+	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+	<script src="assets/js/ajaxrequests.js"></script>
+	
+	<script src="assets/js/utilities.js"></script>
+
+	<script type="text/javascript">
+		function sendFormData(){
+			data = [$('#loginUser').val(), $('#loginPass').val()]
+			sendLogin(data, $('#message'))
+		}
+	</script>
+</head> 
+
+<div data-role="page">
+
+	<div data-role="header" id="menu_header">
+		<h1>Login</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+
+		Username: <input type="text" name="user" id="loginUser"><br />
+		Password: <input type="password" name="password" id="loginPass"></br>
+		<button onClick="sendFormData();" name="Send">Login</button><br />
+		<a href="register.html" data-role="button">Create Account</a>
+		<p id="message">
+
+		</p>
+
+	</div><!-- /content -->
+
+	
+
+	<div data-role="footer" id="menu_footer"  class="ui-bar">
+		
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

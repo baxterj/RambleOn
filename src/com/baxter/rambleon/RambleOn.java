@@ -10,7 +10,7 @@ public class RambleOn extends DroidGap {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);     
-        super.loadUrl("file:///android_asset/www/testajax.html");
+        super.loadUrl("file:///android_asset/www/login.html");
     }
 
     @Override
@@ -18,4 +18,4 @@ public class RambleOn extends DroidGap {
         getMenuInflater().inflate(R.menu.activity_ramble_on, menu);
         return true;
     }  
-}
+} 
