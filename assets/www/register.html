@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
+	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
 	<script src="assets/js/jquery-1.7.1.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
@@ -16,14 +17,17 @@
 
 	<script type="text/javascript">
 		function sendFormData(){
-			if($('#regPass').val() != $('#confPass').val()){
-				$('#message').html('Passwords do not match')
-			}else if($('#regEmail').val() != $('#confEmail').val()){
-				$('#message').html('Email addresses do not match')
-			}else{
+			if(validateForm()){
 				data = [$('#regUser').val(), $('#regPass').val(), $('#regEmail').val()]
 				sendRegister(data, $('#message'))
 			}
+		}
+		function validateForm(){
+			return validateField($('#regUser'), 'Username', $('#message'), 'alphanum', true, 4, 20) &&
+				validateField($('#regPass'), 'Password', $('#message'), 'alphanum', true, 4, 40) &&
+				validateField($('#regEmail'), 'Email', $('#message'), 'email', true, 6, 254) &&
+				fieldsEqual($('#regPass'), $('#confPass'), 'Passwords', $('#message')) &&
+				fieldsEqual($('#regEmail'), $('#confEmail'), 'Emails', $('#message'))
 		}
 	</script>
 	
@@ -31,29 +35,31 @@
 
 <div data-role="page">
 
-	<div data-role="header" id="menu_header">
+	<div data-role="header" id="menu_header" data-theme="d">
+		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
 		<h1>Register</h1>
+		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a>
 	</div><!-- /header -->
 
 	<div data-role="content">	
-
-		Username: <input type="text" name="user" id="regUser"><br />
-		Password: <input type="password" name="password" id="regPass"><br />
-		Confirm Password: <input type="password" name="confpassword" id="confPass"><br />
-		Email: <input type="email" name="email" id="regEmail"><br />
-		Confirm Email: <input type="email" name="confemail" id="confEmail"><br />
-		<button onClick="sendFormData();" name="Send">Register Now</button><br />
-		<a href="login.html" data-role="button">I have an account</a>
-		<p id="message">
-
-		</p>
+		<div class="rambleon_logo_register">
+			<img src="assets/images/rambleon_logo_sm_cropped.png" width="100%" />
+		</div>
+		Username: <input type="text" name="user" id="regUser" data-mini="true">
+		Password: <input type="password" name="password" id="regPass" data-mini="true">
+		Confirm Password: <input type="password" name="confpassword" id="confPass" data-mini="true">
+		Email: <input type="email" name="email" id="regEmail" data-mini="true">
+		Confirm Email: <input type="email" name="confemail" id="confEmail" data-mini="true">
+		<p id="message">&nbsp;</p>
+		<button onClick="sendFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
+		
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" id="menu_footer"  class="ui-bar">
-		
+	<div data-role="footer" id="menu_footer" class="ui-bar">
+		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->
 

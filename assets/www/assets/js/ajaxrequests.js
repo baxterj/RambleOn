@@ -6,7 +6,7 @@ function sendLogin(data, messageTarget){
 		"user": data[0],
 		"passw": data[1]
 	});
-	sendPost(data, messageTarget, successLoginRegister, 'login', false)
+	sendAjax(data, messageTarget, successLoginRegister, 'login', 'POST', false)
 
 }
 
@@ -16,7 +16,7 @@ function sendRegister(data, messageTarget){
 		"passw": data[1],
 		"email": data[2]
 	});
-	sendPost(data, messageTarget, successLoginRegister, 'register', false)
+	sendAjax(data, messageTarget, successLoginRegister, 'register', 'POST', false)
 }
 
 function successLoginRegister(data){
@@ -29,11 +29,9 @@ function successLoginRegister(data){
 
 
 
-
-/*
-Generic function for sending post requests
-*/
-function sendPost(data, messageTarget, successFunc, apiLocation, useAuth){
+//Generic function for sending ajax requests, pass error message display target
+//and function for what to do on success
+function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){
 	var auth=''
 	if(useAuth){
 		user = window.localStorage.getItem("user")
@@ -43,7 +41,7 @@ function sendPost(data, messageTarget, successFunc, apiLocation, useAuth){
 
 	$.ajax({
 		url: apiUrl + apiLocation + '/?format=json' + auth,
-		type: 'POST',
+		type: reqType,
 		contentType: 'application/json',
 		data: data,
 		dataType: 'json',

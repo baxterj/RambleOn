@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
+	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
 	<script src="assets/js/jquery-1.7.1.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
@@ -19,24 +20,23 @@
 
 <div data-role="page">
 
-	<div data-role="header" id="menu_header">
+	<div data-role="header" id="menu_header" data-theme="d">
+		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
 		<h1>Home</h1>
+		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a>
 	</div><!-- /header -->
 
 	<div data-role="content">	
 
-		<script type="text/javascript">
-			document.write('user = ' + window.localStorage.getItem('user') + '<br />') 
-			document.write('apikey = ' + window.localStorage.getItem('apikey'))
-		</script>
+		
 
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" id="menu_footer"  class="ui-bar">
-		
+	<div data-role="footer" id="menu_footer" class="ui-bar">
+		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
