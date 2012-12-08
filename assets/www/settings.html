@@ -2,35 +2,50 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>Welcome to RambleOn</title> 
+	<title>RambleOnline - Home</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
+	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
-	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-1.8.2.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
-	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
-
+	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
+	<script src="assets/js/ajaxrequests.js"></script>
+	
 	<script src="assets/js/utilities.js"></script>
 
+
 </head> 
-<body> 
-
-
 
 <div data-role="page">
+	<script type="text/javascript">
+	function logout(){
+		window.localStorage.removeItem("apikey");
+		window.localStorage.removeItem("user");
+		$.mobile.changePage( "login.html", { transition: "slidedown"} );
+	}
+	</script>
 
-	<div data-role="header" id="menu_header">
-		<a href="index.html" data-rel="back" data-role="button" data-icon="cross">Cancel</a>
-		<h1>Settings</h1>
-		<a href="#" onclick="" data-role="button" data-icon="save">Save</a>
+
+	<div data-role="header" id="menu_header" data-theme="d">
+		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
+		<h1>Options</h1>
 	</div><!-- /header -->
 
-	<div data-role="content">	
-		<h2>form to go here</h2>
+	<div data-role="content">
+
+		<a href="#" onClick="logout()" data-role="button" data-icon="minus" data-theme="a">Logout</a>
+		<a href="#" onClick="navigator.app.exitApp()" data-role="button" data-icon="delete" data-theme="a">Exit App</a>
+
+
 	</div><!-- /content -->
 
 	
+
+	<div data-role="footer" id="menu_footer" class="ui-bar">
+		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
+	</div><!-- /footer -->
 </div><!-- /page -->
 
 </body>

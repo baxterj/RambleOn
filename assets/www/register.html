@@ -8,37 +8,39 @@
 	<link rel="stylesheet" href="assets/css/core.css" />
 	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
-	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-1.8.2.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
-	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
 	<script src="assets/js/utilities.js"></script>
 
-	<script type="text/javascript">
-		function sendFormData(){
-			if(validateForm()){
-				data = [$('#regUser').val(), $('#regPass').val(), $('#regEmail').val()]
-				sendRegister(data, $('#message'))
-			}
-		}
-		function validateForm(){
-			return validateField($('#regUser'), 'Username', $('#message'), 'alphanum', true, 4, 20) &&
-				validateField($('#regPass'), 'Password', $('#message'), 'alphanum', true, 4, 40) &&
-				validateField($('#regEmail'), 'Email', $('#message'), 'email', true, 6, 254) &&
-				fieldsEqual($('#regPass'), $('#confPass'), 'Passwords', $('#message')) &&
-				fieldsEqual($('#regEmail'), $('#confEmail'), 'Emails', $('#message'))
-		}
-	</script>
+	
 	
 </head> 
+<body>
 
 <div data-role="page">
+	<script type="text/javascript">
+		function sendFormData(){
+			if(validateForm($('#regMessage'))){
+				data = [$('#regUser').val(), $('#regPass').val(), $('#regEmail').val()]
+				sendRegister(data, $('#regMessage'))
+			}
+		}
+		function validateForm(messageTarget){
+			return validateField($('#regUser'), 'Username', messageTarget, 'alphanum', true, 4, 20) &&
+				validateField($('#regPass'), 'Password', messageTarget, 'password', true, 4, 40) &&
+				validateField($('#regEmail'), 'Email', messageTarget, 'email', true, 6, 254) &&
+				fieldsEqual($('#regPass'), $('#confPass'), 'Passwords', messageTarget) &&
+				fieldsEqual($('#regEmail'), $('#confEmail'), 'Emails', messageTarget)
+		}
+	</script>
 
 	<div data-role="header" id="menu_header" data-theme="d">
 		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
 		<h1>Register</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a>
+		<!--a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a-->
 	</div><!-- /header -->
 
 	<div data-role="content">	
@@ -50,7 +52,7 @@
 		Confirm Password: <input type="password" name="confpassword" id="confPass" data-mini="true">
 		Email: <input type="email" name="email" id="regEmail" data-mini="true">
 		Confirm Email: <input type="email" name="confemail" id="confEmail" data-mini="true">
-		<p id="message">&nbsp;</p>
+		<p id="regMessage" class="errorMessage">&nbsp;</p>
 		<button onClick="sendFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
 		
 

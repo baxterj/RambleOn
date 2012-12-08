@@ -8,9 +8,9 @@
 	<link rel="stylesheet" href="assets/css/core.css" />
 	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
-	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-1.8.2.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
-	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
 	<script src="assets/js/utilities.js"></script>
@@ -19,6 +19,14 @@
 </head> 
 
 <div data-role="page">
+
+	<script type="text/javascript">
+		
+		$(document).ready(function() { //this is only called when page is first page to load. ajax page transitions dont trigger doc.ready
+			sortPageContentHeight();
+		});
+		
+	</script>
 
 	<div data-role="header" id="menu_header" data-theme="d">
 		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>

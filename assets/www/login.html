@@ -8,42 +8,58 @@
 	<link rel="stylesheet" href="assets/css/core.css" />
 	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
-	<script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery-1.8.2.min.js"></script>
 	<script src="assets/js/jquery-mobile-config.js"></script>
-	<script src="assets/js/jquery.mobile-1.1.1.min.js"></script>
+	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
 	<script src="assets/js/utilities.js"></script>
 
+<!--$('#thing', $.mobile.activePage) for selecting only on this page-->
+
+</head> 
+<body>
+<div data-role="page">
 	<script type="text/javascript">
 		function sendFormData(){
-			data = [$('#loginUser').val(), $('#loginPass').val()]
-			sendLogin(data, $('#message'))
+			if(validateForm($('#loginMessage'))){
+				data = [$('#loginUser').val(), $('#loginPass').val()]
+				sendLogin(data, $('#loginMessage'))
+			}
+			
 		}
-		$(document).ready(function() {
-			sortPageContentHeight();
-		});
-	</script>
-</head> 
 
-<div data-role="page">
+		function validateForm(messageTarget){
+			return validateField($('#loginUser'), 'Username', messageTarget, 'alphanum', true, 4, 20) &&
+				validateField($('#loginPass'), 'Password', messageTarget, 'password', true, 4, 40)
+		}
+
+		$(document).ready(function() { //this is only called when page is first page to load. ajax page transitions dont trigger doc.ready
+			sortPageContentHeight();
+			if(window.localStorage.getItem("apikey") && window.localStorage.getItem("user")){
+				$.mobile.changePage( "home.html", { transition: "slideup"} )
+			}
+		});
+		
+	</script>
 
 	<div data-role="header" id="menu_header" data-theme="d">
 		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
 		<h1>Login</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a>
+		<!--a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a-->
 	</div><!-- /header -->
 
 	<div data-role="content">
 		<div class="rambleon_logo_login">
 			<img src="assets/images/rambleon_logo_cropped.png" width="100%" />
-		</div>
-		Username: <input type="text" name="user" id="loginUser"><br />
+			<b>www.rambleonline.com</b>
+		</div><br />
+		Username: <input type="text" name="user" id="loginUser" >
 		Password: <input type="password" name="password" id="loginPass">
-		<p id="message">&nbsp;</p>
+		<p id="loginMessage" class="errorMessage">&nbsp;</p>
 		<button onClick="sendFormData();" name="Send" data-theme="a">Login</button><br />
-		<a href="register.html" data-role="button" data-theme="a" data-icon="plus">Create Account</a>
-		<a href="forgot.html" data-role="button" data-theme="a" data-icon="info">Forgot Password</a>
+		<a href="register.html" data-role="button" data-theme="a" data-icon="plus" data-mini="true">Create Account</a>
+		<a href="forgot.html" data-role="button" data-theme="a" data-icon="info" data-mini="true">Forgot Password</a>
 
 	</div><!-- /content -->
 

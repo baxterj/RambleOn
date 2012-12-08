@@ -45,7 +45,7 @@ function validateField(field, fieldName, messageTarget, rule, required, min, max
 		}
 	}
 
-	if(rule && rule != ''){
+	if(rule){
 		if(!testInputRule(rule, text)){
 			messageTarget.html(fieldName + ' contains invalid characters')
 			return false
@@ -56,7 +56,17 @@ function validateField(field, fieldName, messageTarget, rule, required, min, max
 }
 
 function testInputRule(rule, text){
-	return true
+	if(rule == 'alphanum'){
+		var reg = /^([a-zA-Z0-9 _-]+)$/
+		return reg.test(text)
+	}else if(rule == 'email'){
+		var reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+		return reg.test(text)
+	}else if(rule == 'password'){
+		var reg = /^[\w!@#%&/(){}[\]=?+*^~\-.:,;]{1,32}$/
+		return reg.test(text)
+	}
+	return false
 }
 
 function fieldsEqual(first, second, setName, messageTarget){
