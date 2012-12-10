@@ -15,57 +15,62 @@
 	
 	<script src="assets/js/utilities.js"></script>
 
-<!--$('#thing', $.mobile.activePage) for selecting only on this page-->
+
 
 </head> 
 <body>
-<div data-role="page">
+<div data-role="page" id="loginPage">
 	<script type="text/javascript">
-		function sendFormData(){
-			if(validateForm($('#loginMessage'))){
+		$(document).ready(function(){
+			redirectLoggedIn()
+			$('#loginPage').bind("pageshow", function() {
+				redirectLoggedIn()
+			});
+			
+		});
+
+		function sendLoginFormData(){
+			if(validateLoginForm($('#loginMessage'))){
 				data = [$('#loginUser').val(), $('#loginPass').val()]
 				sendLogin(data, $('#loginMessage'))
 			}
 			
 		}
 
-		function validateForm(messageTarget){
+		function validateLoginForm(messageTarget){
 			return validateField($('#loginUser'), 'Username', messageTarget, 'alphanum', true, 4, 20) &&
 				validateField($('#loginPass'), 'Password', messageTarget, 'password', true, 4, 40)
 		}
 
-		$(document).ready(function() { //this is only called when page is first page to load. ajax page transitions dont trigger doc.ready
-			sortPageContentHeight();
-			if(window.localStorage.getItem("apikey") && window.localStorage.getItem("user")){
-				$.mobile.changePage( "home.html", { transition: "slideup"} )
-			}
-		});
 		
 	</script>
 
 	<div data-role="header" id="menu_header" data-theme="d">
-		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
+		<!--a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a-->
 		<h1>Login</h1>
 		<!--a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a-->
 	</div><!-- /header -->
 
-	<div data-role="content">
+	<div data-role="content" class="ui-content">
 		<div class="rambleon_logo_login">
 			<img src="assets/images/rambleon_logo_cropped.png" width="100%" />
 			<b>www.rambleonline.com</b>
 		</div><br />
-		Username: <input type="text" name="user" id="loginUser" >
-		Password: <input type="password" name="password" id="loginPass">
-		<p id="loginMessage" class="errorMessage">&nbsp;</p>
-		<button onClick="sendFormData();" name="Send" data-theme="a">Login</button><br />
+		<form>
+			Username: <input type="text" name="user" id="loginUser" >
+			Password: <input type="password" name="password" id="loginPass">
+			<p id="loginMessage" class="errorMessage">&nbsp;</p>
+		</form>
+		<button onClick="sendLoginFormData();" name="Send" data-theme="a">Login</button><br />
 		<a href="register.html" data-role="button" data-theme="a" data-icon="plus" data-mini="true">Create Account</a>
 		<a href="forgot.html" data-role="button" data-theme="a" data-icon="info" data-mini="true">Forgot Password</a>
+
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" id="menu_footer" class="ui-bar">
+	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->

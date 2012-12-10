@@ -20,13 +20,7 @@
 
 <div data-role="page">
 
-	<script type="text/javascript">
-		
-		$(document).ready(function() { //this is only called when page is first page to load. ajax page transitions dont trigger doc.ready
-			sortPageContentHeight();
-		});
-		
-	</script>
+
 
 	<div data-role="header" id="menu_header" data-theme="d">
 		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
@@ -34,16 +28,16 @@
 		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a>
 	</div><!-- /header -->
 
-	<div data-role="content">	
+	<div data-role="content" class="ui-content">	
 
 		
-
+hello
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" id="menu_footer" class="ui-bar">
+	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->

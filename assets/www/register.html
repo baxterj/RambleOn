@@ -20,15 +20,15 @@
 </head> 
 <body>
 
-<div data-role="page">
+<div data-role="page" id="registerPage">
 	<script type="text/javascript">
-		function sendFormData(){
-			if(validateForm($('#regMessage'))){
+		function sendRegFormData(){
+			if(validateRegForm($('#regMessage'))){
 				data = [$('#regUser').val(), $('#regPass').val(), $('#regEmail').val()]
 				sendRegister(data, $('#regMessage'))
 			}
 		}
-		function validateForm(messageTarget){
+		function validateRegForm(messageTarget){
 			return validateField($('#regUser'), 'Username', messageTarget, 'alphanum', true, 4, 20) &&
 				validateField($('#regPass'), 'Password', messageTarget, 'password', true, 4, 40) &&
 				validateField($('#regEmail'), 'Email', messageTarget, 'email', true, 6, 254) &&
@@ -38,29 +38,31 @@
 	</script>
 
 	<div data-role="header" id="menu_header" data-theme="d">
-		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
+		<a href="login.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
 		<h1>Register</h1>
 		<!--a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right"></a-->
 	</div><!-- /header -->
 
-	<div data-role="content">	
+	<div data-role="content" class="ui-content">	
 		<div class="rambleon_logo_register">
 			<img src="assets/images/rambleon_logo_sm_cropped.png" width="100%" />
 		</div>
-		Username: <input type="text" name="user" id="regUser" data-mini="true">
-		Password: <input type="password" name="password" id="regPass" data-mini="true">
-		Confirm Password: <input type="password" name="confpassword" id="confPass" data-mini="true">
-		Email: <input type="email" name="email" id="regEmail" data-mini="true">
-		Confirm Email: <input type="email" name="confemail" id="confEmail" data-mini="true">
+		<form>
+			Username: <input type="text" name="regUser" id="regUser" data-mini="true">
+			Password: <input type="password" name="regPass" id="regPass" data-mini="true">
+			Confirm Password: <input type="password" name="confPass" id="confPass" data-mini="true">
+			Email: <input type="email" name="email" id="regEmail" data-mini="true">
+			Confirm Email: <input type="email" name="confEmail" id="confEmail" data-mini="true">
+		</form>
 		<p id="regMessage" class="errorMessage">&nbsp;</p>
-		<button onClick="sendFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
-		
+		<button onClick="sendRegFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
+
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" id="menu_footer" class="ui-bar">
+	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->

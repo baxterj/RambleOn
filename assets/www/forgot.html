@@ -2,7 +2,7 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>RambleOnline - Home</title> 
+	<title>RambleOnline - Forgot Password</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
@@ -18,29 +18,24 @@
 
 </head> 
 
-<div data-role="page" id="settingsPage">
-	<script type="text/javascript">
-		$("#settingsPage").bind("pageshow", function() {
-			redirectLoggedOut()
-		});
-	</script>
+<div data-role="page">
+
+
 
 	<div data-role="header" id="menu_header" data-theme="d">
-		<a href="home.html" data-rel="back" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>Options</h1>
+		<a href="login.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+		<h1>Forgot</h1>
 	</div><!-- /header -->
 
-	<div data-role="content" class="ui-content">
+	<div data-role="content" class="ui-content">	
 
-		<a href="#" onClick="logout()" data-role="button" data-icon="minus" data-theme="a">Logout</a>
-		<a href="#" onClick="navigator.app.exitApp()" data-role="button" data-icon="delete" data-theme="a">Exit App</a>
-
+		Forgot your password?
 
 	</div><!-- /content -->
 
 	
 
-	<div data-role="footer" data-id="foo1" class="ui-bar ui-footer" data-position="fixed">
+	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
 	</div><!-- /footer -->
 </div><!-- /page -->

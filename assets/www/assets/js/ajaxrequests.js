@@ -1,6 +1,7 @@
 var apiUrl = 'http://www.rambleonline.com/api/v1/'
 
 
+
 function sendLogin(data, messageTarget){
 	var data = JSON.stringify({
 		"user": data[0],
@@ -22,11 +23,31 @@ function sendRegister(data, messageTarget){
 function successLoginRegister(data){
 	window.localStorage.setItem("apikey", data.key)
 	window.localStorage.setItem("user", data.user)
-	window.location = 'home.html'
+	$.mobile.changePage("home.html")
 }
 
 
+function logout(){
+	window.localStorage.removeItem("apikey");
+	window.localStorage.removeItem("user");
+	$.mobile.changePage("login.html");
+}
 
+function checkLoggedIn(){
+	return(window.localStorage.getItem("apikey") != null)
+}
+
+function redirectLoggedOut(){
+	if(!checkLoggedIn()){
+		$.mobile.changePage("login.html")
+	}
+}
+
+function redirectLoggedIn(){
+	if(checkLoggedIn()){
+		$.mobile.changePage("home.html")
+	}
+}
 
 
 //Generic function for sending ajax requests, pass error message display target
