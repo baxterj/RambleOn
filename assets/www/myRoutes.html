@@ -2,7 +2,7 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>RambleOnline - Home</title> 
+	<title>RambleOnline - List of Routes</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
@@ -19,26 +19,28 @@
 </head> 
 
 <div data-role="page">
-
+	<script type="text/javascript">
+		getMyRoutesItems($('#routesListMessage'), window.localStorage.getItem("routesList"))
+	</script>
 
 
 	<div data-role="header" id="menu_header" data-theme="d">
 		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>Home</h1>
+		<h1>My Routes</h1>
 		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 	</div><!-- /header -->
 
 	<div data-role="content" class="ui-content">	
 
-		<p><a href="create.html">Create</a></p>
-		<p><a href="search.html">Search</a></p>
-		<p><a href="myRoutes.html">My Routes</a></p>
-		<p><a href="myRoutes.html">Favourite Routes</a></p>
-		<br />
-		<p><a href="notesPhotos.html">Notes &amp; Photos</a></p>
-
-
-
+		<ul data-role="listview" id="myRoutesList" data-split-icon="gear" data-split-theme="d" data-filter="true">
+			<!--li><a href="index.html">
+				<img src="images/album-bb.jpg" />
+				<h3>Broken Bells</h3>
+				<p>Broken Bells</p>
+				</a><a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+			</li-->
+		</ul>
+		<p id="routesListMessage" class="errorMessage">&nbsp;</p>
 	</div><!-- /content -->
 
 	

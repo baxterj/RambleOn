@@ -3,7 +3,7 @@ $(document).on("mobileinit", function() {
 	$.support.cors = true;
 	$.mobile.allowCrossDomainPages = true;
 	$.mobile.buttonMarkup.hoverDelay = 100;
-	$.mobile.defaultPageTransition = 'slide';
+	$.mobile.defaultPageTransition = 'none';
 	//$.mobile.ajaxEnabled = false;
 	//$.mobile.pushStateEnabled = false;
 	$.mobile.selectmenu.prototype.options.nativeMenu = false;
