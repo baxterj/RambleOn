@@ -61,7 +61,6 @@ function successRoutesList(data, messageTarget){
 		messageTarget.html('No routes found for user: ' + window.localStorage.getItem("user"))
 	}else{
 		for(var i = 0; i < data.objects.length; i++){
-			//html += '<li><a href="index.html">route' + i + '</a></li>'
 			html += createRouteListItem(data.objects[i])
 		}
 	}
@@ -70,9 +69,28 @@ function successRoutesList(data, messageTarget){
 }
 
 function createRouteListItem(route){
-	var html = '<li><a href="route.html?id=' + route.id + '">' + route.name + '</a></li>'
+	var html = '<li data-filtertext="'+stringifyArray(route.keywords)+'">\n'
+	html += '<a href="route.html?id='+route.id+'">\n'
+	html += '<div class="routelist_title">' + route.name + '</div>\n'
+	html += '<div class="routelist_owner">Owner: ' + route.owner.username + '</div>\n'
+	html += '<div class="routelist_fav fav_'+route.fav+'"></div>\n'
+	html += '<div class="routelist_done done_'+route.done+'"></div>\n'
+	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
+	html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
+	html += '</a></li>\n'
 	return html
 }
+
+function showMapThumbnail(id){
+	var thumb = $.mobile.activePage.find('#mapThumb'+id)
+	if(thumb.css('display') == 'none'){
+		thumb.css('display', 'block')
+	}else{
+		thumb.css('display', 'none')
+	}
+	
+}
+
 
 
 //Generic function for sending ajax requests, pass error message display target

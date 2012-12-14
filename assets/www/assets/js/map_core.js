@@ -27,3 +27,7 @@ function setMapZoom(zoomout){
 		map.setZoom(++mapZoom);
 	}
 }
+
+function generateThumbCoords(){
+	
+}

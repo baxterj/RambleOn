@@ -9,3 +9,7 @@
 	display: none;
 
 }
+
+#map_canvas{
+	height:100%;
+}

@@ -56,7 +56,13 @@ function fieldsEqual(first, second, setName, messageTarget){
 	return true
 }
 
-
+function stringifyArray(argArray){
+	var out = ''
+	for (var i = 0; i < argArray.length; i++){
+		out += argArray[i] + ' '
+	}
+	return out
+}
 
 var initialScreenSize = window.innerHeight;
 window.addEventListener("resize", function() {
