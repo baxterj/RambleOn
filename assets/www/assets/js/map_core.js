@@ -1,9 +1,17 @@
 var map;
 var mapZoom = 12;
 
-$(document).ready(function(){
-	$('.footer_button').button();
-});
+
+
+$('#page-viewRoute').live('pageshow', function(event){
+	$.mobile.activePage.find('.map_content').css('height', $(window).height()
+	 - $.mobile.activePage.find('.map_header').outerHeight()
+	 - $.mobile.activePage.find('.ui-footer').outerHeight() )
+	initialize()
+})
+
+
+
 
 
 function initialize(){
@@ -14,7 +22,7 @@ function initialize(){
       rotateControl: true
     };
 
-    map = new google.maps.Map(document.getElementById("map_canvas"),
+    map = new google.maps.Map(document.getElementById("map_canvas_route"),
         mapOptions);
 
 
@@ -29,5 +37,5 @@ function setMapZoom(zoomout){
 }
 
 function generateThumbCoords(){
-	
+	//possibly do on server
 }
