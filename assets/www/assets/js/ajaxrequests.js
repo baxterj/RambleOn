@@ -91,6 +91,10 @@ function showMapThumbnail(id){
 	
 }
 
+function getRoute(id, mapUpdateFunction){
+	sendAjax(null, null, mapUpdateFunction, 'route/'+id, 'GET', true)
+}
+
 
 
 //Generic function for sending ajax requests, pass error message display target

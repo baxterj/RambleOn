@@ -61,4 +61,6 @@
 	background-image: url('http://www.placekitten.com/300/200');
 }
 
-
+.popup p{
+	padding:10px;
+}

@@ -66,12 +66,11 @@ function stringifyArray(argArray){
 
 var initialScreenSize = window.innerHeight;
 window.addEventListener("resize", function() {
-    if(window.innerHeight < initialScreenSize){
-        $("[data-role=footer]").hide();
-    }
-    else{
-        $("[data-role=footer]").show();
-    }
+	if(window.innerHeight < initialScreenSize){
+		$.mobile.activePage.find("[data-role=footer]").hide();
+	}else{
+		$.mobile.activePage.find("[data-role=footer]").show();
+	}
 });
 
 
@@ -86,4 +85,27 @@ function getUrlVars()
         vars[hash[0]] = hash[1];
     }
     return vars;
+}
+
+function yesTrue(bool){
+	if(bool){
+		return 'Yes'
+	}else{
+		return 'No'
+	}
+}
+
+function pageHeader(newText){
+	$.mobile.activePage.find('[data-role="header"] h1').html(newText)
+}
+
+function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
+	var out = ''
+	out += '<b>Name: </b>' + data.name + '<br />\n'
+	out += '<b>Owner: </b>' + data.owner.username + '<br />\n'
+	out += '<b>Private: </b>' + yesTrue(data.private) + '<br />\n'
+	out += '<b>Created: </b>' + data.creation_date + '<br />\n'
+	out += '<b>Last Update: </b>' + data.update_date + '<br />\n'
+	out += '<b>Keywords: </b>' + data.keywords + '<br />\n'
+	return out
 }

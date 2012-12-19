@@ -2,7 +2,7 @@
 	padding:0;
 }
 
-#map_canvas_route{
+.map_canvas{
 	height: 100%;
 	width: 100%;
 }

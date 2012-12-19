@@ -4,7 +4,7 @@
 <head> 
 	<title>RambleOnline - Route</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="assets/css/jquery.mobile-1.1.1.min.css" />
+	<link rel="stylesheet" href="assets/css/jquery.mobile-1.2.0.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
 	<link rel="stylesheet" href="assets/css/menus.css" />
 	<script type="text/javascript" charset="utf-8" src="assets/js/cordova-2.1.0.js"></script>
@@ -34,15 +34,28 @@
 			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 		</div><!-- /header -->
 
+		
+
 		<div data-role="content" class="map_content">
-			<div id="map_canvas_route"></div>
+			<div id="map_canvas_route" class="map_canvas"></div>
 		</div><!-- /content -->
 
 
-		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-			
+
+		<div data-role="footer" class="ui-bar ui-footer" >
+
+			<a href="#routeInfo" data-rel="popup" >Route Info</a>
+
+			<div data-role="popup" id="routeInfo" class="popup">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p>&nbsp;</p>
+			</div>
+
+
 		</div><!-- /footer -->
 
 	</div><!--/page-->
+
+
 
 </body>
