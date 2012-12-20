@@ -1,6 +1,13 @@
 var apiUrl = 'http://www.rambleonline.com/api/v1/'
-var routesListType = 'my' //my, favourite, done
+var routesListType = 'my' //my, fav, done, saved
 
+$('#page-routesList').live('pageshow', function(event, data){
+	if(data.prevPage.attr('id') == 'page-home'){
+		getMyRoutesItems($('#routesListMessage'), getUrlVars()["list"])
+	}else{
+		getMyRoutesItems($('#routesListMessage'), routesListType)
+	}
+})
 
 function sendLogin(data, messageTarget){
 	var data = JSON.stringify({
@@ -51,7 +58,9 @@ function redirectLoggedIn(){
 
 
 function getMyRoutesItems(messageTarget, listType){
-	routesListType = listType
+	if (listType != null){
+		routesListType = listType
+	}
 	sendAjax(null, messageTarget, successRoutesList, 'myroutes', 'GET', true)
 }
 
@@ -60,10 +69,33 @@ function successRoutesList(data, messageTarget){
 	if(data.meta.total_count < 1){
 		messageTarget.html('No routes found for user: ' + window.localStorage.getItem("user"))
 	}else{
-		for(var i = 0; i < data.objects.length; i++){
-			html += createRouteListItem(data.objects[i])
+		if(routesListType == 'my'){
+			for(var i = 0; i < data.objects.length; i++){
+				if(data.objects[i].owner.username.toLowerCase() == window.localStorage.getItem("user").toLowerCase()){
+					html += createRouteListItem(data.objects[i])
+				}
+			}
+		}else if(routesListType == 'fav'){
+			for(var i = 0; i < data.objects.length; i++){
+				if(data.objects[i].fav){
+					html += createRouteListItem(data.objects[i])
+				}
+			}
+		}else if(routesListType == 'done'){
+			for(var i = 0; i < data.objects.length; i++){
+				if(data.objects[i].done){
+					html += createRouteListItem(data.objects[i])
+				}
+			}
+		}else if(routesListType == 'saved'){
+			for(var i = 0; i < data.objects.length; i++){
+				html += createRouteListItem(data.objects[i])
+			}
+		}else{
+			messageTarget.html('Please select a list')
 		}
 	}
+
 	$('#myRoutesList').html(html)
 	$('#myRoutesList').listview('refresh')
 }
@@ -72,13 +104,23 @@ function createRouteListItem(route){
 	var html = '<li data-filtertext="'+stringifyArray(route.keywords)+'">\n'
 	html += '<a href="route.html?id='+route.id+'">\n'
 	html += '<div class="routelist_title">' + route.name + '</div>\n'
-	html += '<div class="routelist_owner">Owner: ' + route.owner.username + '</div>\n'
+	html += '<div class="routelist_owner'+isUserClass(route.owner.username)+'">Owner: ' + route.owner.username + '</div>\n'
+	html += '<div class="routelist_icons">\n'
 	html += '<div class="routelist_fav fav_'+route.fav+'"></div>\n'
 	html += '<div class="routelist_done done_'+route.done+'"></div>\n'
+	html += '</div>'
 	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
 	html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
 	html += '</a></li>\n'
 	return html
+}
+
+function isUserClass(user){
+	if (window.localStorage.getItem('user') == user){
+		return ' selfUser'
+	}else{
+		return ''
+	}
 }
 
 function showMapThumbnail(id){
@@ -95,6 +137,21 @@ function getRoute(id, mapUpdateFunction){
 	sendAjax(null, null, mapUpdateFunction, 'route/'+id, 'GET', true)
 }
 
+function changeFav(id, bool){
+	var data = JSON.stringify({
+		'route': id,
+		'set': bool
+	})
+	sendAjax(data, null, null, 'fav', 'POST', true)
+}
+
+function changeDone(id, bool){
+	var data = JSON.stringify({
+		'route': id,
+		'set': bool
+	})
+	sendAjax(data, null, null, 'done', 'POST', true)
+}
 
 
 //Generic function for sending ajax requests, pass error message display target
@@ -116,7 +173,9 @@ function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAut
 		crossDomain: true,
 		processData: false,
 		success: function(data, status, jqXHR) {
-			successFunc(data, messageTarget)
+			if(successFunc != null){
+				successFunc(data, messageTarget)
+			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			messageTarget.html(jQuery.parseJSON(jqXHR.responseText).error_message)

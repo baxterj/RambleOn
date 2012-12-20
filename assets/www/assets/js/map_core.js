@@ -14,8 +14,10 @@ var maps = {
 $('#page-viewRoute').live('pageshow', function(event){
 	sortMapHeight()
 	createMap()
-	getRoute(getUrlVars()['id'], loadRoute)
+	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 1000);
 })
+
+
 
 function loadRoute(data, messageTarget){
 	if(maps.routeMap == null){//map not loaded yet, try again in 2 seconds
@@ -27,6 +29,7 @@ function loadRoute(data, messageTarget){
 		buildPathFromCoords(data, maps.routeMap.route)
 		pageHeader(data.name)
 		$.mobile.activePage.find('#routeInfo p').html(routeInfoHTML(data))
+		createFavDoneButtons(data.id, data.fav, data.done)
 	}
 }
 
@@ -42,6 +45,25 @@ function createMap(){
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),
 		mapOptions);
 
+}
+
+function createFavDoneButtons(routeID, fav, done){
+	$.mobile.activePage.find('.route_favbuttons .favBtn img').attr('src', 'assets/images/fav_'+fav+'_mini.png')
+	$.mobile.activePage.find('.route_favbuttons .doneBtn img').attr('src', 'assets/images/done_'+done+'_mini.png')
+	$.mobile.activePage.find('.route_favbuttons .favBtn').attr('onClick', 'flipFavBtn('+routeID+', '+!fav+')')
+	$.mobile.activePage.find('.route_favbuttons .doneBtn').attr('onClick', 'flipDoneBtn('+routeID+', '+!done+')')
+}
+
+function flipFavBtn(routeID, bool){
+	changeFav(routeID, bool)
+	$.mobile.activePage.find('.route_favbuttons .favBtn').attr('onClick', 'flipFavBtn('+routeID+', '+!bool+')')
+	$.mobile.activePage.find('.route_favbuttons .favBtn img').attr('src', 'assets/images/fav_'+bool+'_mini.png')
+}
+
+function flipDoneBtn(routeID, bool){
+	changeDone(routeID, bool)
+	$.mobile.activePage.find('.route_favbuttons .doneBtn').attr('onClick', 'flipDoneBtn('+routeID+', '+!bool+')')
+	$.mobile.activePage.find('.route_favbuttons .doneBtn img').attr('src', 'assets/images/done_'+bool+'_mini.png')
 }
 
 function buildPathFromCoords(data, polyLine){

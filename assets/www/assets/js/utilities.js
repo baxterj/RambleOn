@@ -87,6 +87,7 @@ function getUrlVars()
     return vars;
 }
 
+
 function yesTrue(bool){
 	if(bool){
 		return 'Yes'

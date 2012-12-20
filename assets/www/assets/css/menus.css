@@ -26,41 +26,57 @@
 	float: left;
 }
 
+.routelist_icons{
+	padding:1pt 3pt 1pt 3pt;
+	background-color: #D7D7D7;
+	border:1px solid #BBB;
+	float:left;
+	margin-top: 2px;
+}
+
 .routelist_fav, .routelist_done {
 	display: block;
-	width:30px;
-	height:29px;
-	float: left;
+	width:20px;
+	height:19px;
+	float:left;
 }
 
 .fav_true{
-	background-image: url('../images/fav_true.png')
+	background-image: url('../images/fav_true_mini.png')
 }
 
 .fav_false{
-	background-image: url('../images/fav_false.png')
+	background-image: url('../images/fav_false_mini.png')
 }
 
 .done_true{
-	background-image: url('../images/done_true.png')
+	background-image: url('../images/done_true_mini.png')
 }
 
 .done_false{
-	background-image: url('../images/done_false.png')
+	background-image: url('../images/done_false_mini.png')
 }
 
 .mapThumb{
 	float: right;
 	clear: both;
 	display: block;
-	width: 300px;
-	height: 200px;
+	width: 250px;
+	height: 150px;
 	background-color: #333;
 	display: none;
-	padding-top: 4pt;
-	background-image: url('http://www.placekitten.com/300/200');
+	margin-top: 4pt;
+	background-image: url('http://www.placekitten.com/250/150');
 }
 
 .popup p{
 	padding:10px;
+}
+
+.selfUser{
+	color: #249b00 !important
+}
+
+.route_favbuttons a img{
+	margin-top:-2px;
 }
