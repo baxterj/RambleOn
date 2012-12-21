@@ -1,4 +1,4 @@
-var map;
+var activeMap;
 var mapZoom = 12;
 var maps = {
 	routeMap: null,
@@ -9,20 +9,34 @@ var maps = {
 	createMap: null
 }
 
+var infowindow = new google.maps.InfoWindow({
+	content: ''
+	//maxWidth:...
+});
 
+var notesContent = []
+var imagesContent = []
+
+var noteMarkers = new google.maps.MVCArray();
+var imageMarkers = new google.maps.MVCArray();
+
+var noteImageRefreshEnabled = true
+var refreshTimer
 
 $('#page-viewRoute').live('pageshow', function(event){
 	sortMapHeight()
 	createMap()
-	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 1000);
+	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 500); //url vars dont load before this event fires so we wait
 })
 
 
 
 function loadRoute(data, messageTarget){
-	if(maps.routeMap == null){//map not loaded yet, try again in 2 seconds
-		setTimeout("loadRoute(data, messageTarget)", 2000);
+	if(maps.routeMap == null){//map not loaded yet, try again in 1 second
+		setTimeout("loadRoute(data, messageTarget)", 1000);
 	}else{
+		activeMap = maps.routeMap
+
 		maps.routeMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
 		maps.routeMap.route = makePolyLine()
 		maps.routeMap.route.setMap(maps.routeMap); //assign route poly to route map
@@ -30,8 +44,96 @@ function loadRoute(data, messageTarget){
 		pageHeader(data.name)
 		$.mobile.activePage.find('#routeInfo p').html(routeInfoHTML(data))
 		createFavDoneButtons(data.id, data.fav, data.done)
+
+		updateNotesPhotos(maps.routeMap)
+		google.maps.event.addListener(maps.routeMap, 'dragend', function() {
+			updateNotesPhotos(maps.routeMap)
+		})
+		google.maps.event.addListener(maps.routeMap, 'zoom_changed', function() {
+			updateNotesPhotos(maps.routeMap)
+		})
+
+
 	}
 }
+
+function updateNotesPhotos(map){
+
+	clearTimeout(refreshTimer)
+	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
+
+	if(noteImageRefreshEnabled){
+		noteImageRefreshEnabled = false
+		for(var i = 0; i < noteMarkers.getLength(); i++){ 
+			noteMarkers.getAt(i).setMap(null)
+		}
+		noteMarkers.clear()
+
+		for(var i = 0; i < imageMarkers.getLength(); i++){ 
+			imageMarkers.getAt(i).setMap(null)
+		}
+		imageMarkers.clear()
+
+		getNotesPhotos(map)
+		
+	}
+
+	
+}
+
+function drawNotes(data, messageTarget){
+	notesContent = data.objects
+	var marker
+	for(var i = 0; i < data.objects.length; i++){
+		//make marker for each
+		marker = new google.maps.Marker({
+			position: new google.maps.LatLng(data.objects[i].lat, data.objects[i].lng),
+			map: activeMap,
+			//icon: '../images/TODO IMAGE'
+			title: data.objects[i].title,
+			num: i
+		});
+		noteMarkers.push(marker)
+		google.maps.event.addListener(marker,"click",function(){
+			showNoteContent(this)
+		});
+	}
+}
+
+function showNoteContent(marker){
+	var html = notesContent[marker.num].id + ': '+ notesContent[marker.num].title
+	infowindow.setContent(html)
+	infowindow.open(activeMap, marker)
+}
+
+
+
+function drawImages(data, messageTarget){
+	imagesContent = data.objects
+	var marker
+	for(var i = 0; i < data.objects.length; i++){
+		//make marker for each
+		marker = new google.maps.Marker({
+			position: new google.maps.LatLng(data.objects[i].lat, data.objects[i].lng),
+			map: activeMap,
+			//icon: '../images/TODO IMAGE'
+			title: data.objects[i].title,
+			num: i
+		});
+		noteMarkers.push(marker)
+		google.maps.event.addListener(marker,"click",function(){
+			showImageContent(this)
+		});
+	}
+}
+
+function showImageContent(marker){
+	var html = imagesContent[marker.num].id + ': '+ imagesContent[marker.num].title + '<br />\n'
+	html+= '<img src="'+ imagesContent[marker.num].thumbnail +'" />\n'
+	infowindow.setContent(html)
+	infowindow.open(activeMap, marker)
+}
+
 
 
 function createMap(){

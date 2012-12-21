@@ -153,6 +153,11 @@ function changeDone(id, bool){
 	sendAjax(data, null, null, 'done', 'POST', true)
 }
 
+function getNotesPhotos(map){
+	var data = 'bounds='+ map.getBounds().toUrlValue()
+	sendAjax(data, null, drawNotes, 'note', 'GET', true)
+	sendAjax(data, null, drawImages, 'image', 'GET', true)
+}
 
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success
