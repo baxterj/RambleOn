@@ -59,30 +59,25 @@ function loadRoute(data, messageTarget){
 
 function updateNotesPhotos(map){
 
-	clearTimeout(refreshTimer)
-	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
-
 	if(noteImageRefreshEnabled){
 		noteImageRefreshEnabled = false
-		for(var i = 0; i < noteMarkers.getLength(); i++){ 
-			noteMarkers.getAt(i).setMap(null)
-		}
-		noteMarkers.clear()
-
-		for(var i = 0; i < imageMarkers.getLength(); i++){ 
-			imageMarkers.getAt(i).setMap(null)
-		}
-		imageMarkers.clear()
-
 		getNotesPhotos(map)
-		
 	}
 
+	clearTimeout(refreshTimer)
+	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
 	
 }
 
 function drawNotes(data, messageTarget){
+
+	for(var i = 0; i < noteMarkers.getLength(); i++){ 
+		noteMarkers.getAt(i).setMap(null)
+	}
+	noteMarkers.clear()
+
 	notesContent = data.objects
+	
 	var marker
 	for(var i = 0; i < data.objects.length; i++){
 		//make marker for each
@@ -91,7 +86,9 @@ function drawNotes(data, messageTarget){
 			map: activeMap,
 			//icon: '../images/TODO IMAGE'
 			title: data.objects[i].title,
-			num: i
+			num: i,
+			optimized: false,
+			clickable: true
 		});
 		noteMarkers.push(marker)
 		google.maps.event.addListener(marker,"click",function(){
@@ -109,7 +106,14 @@ function showNoteContent(marker){
 
 
 function drawImages(data, messageTarget){
+
+	for(var i = 0; i < imageMarkers.getLength(); i++){ 
+		imageMarkers.getAt(i).setMap(null)
+	}
+	imageMarkers.clear()
+
 	imagesContent = data.objects
+
 	var marker
 	for(var i = 0; i < data.objects.length; i++){
 		//make marker for each
@@ -118,7 +122,9 @@ function drawImages(data, messageTarget){
 			map: activeMap,
 			//icon: '../images/TODO IMAGE'
 			title: data.objects[i].title,
-			num: i
+			num: i,
+			optimized: false,
+			clickable: true
 		});
 		noteMarkers.push(marker)
 		google.maps.event.addListener(marker,"click",function(){
@@ -138,10 +144,10 @@ function showImageContent(marker){
 
 function createMap(){
 	var mapOptions = {
-		//center: new google.maps.LatLng(50.848115, -0.11364),
+		center: new google.maps.LatLng(50.848115, -0.11364),
 		zoom: mapZoom,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
-		rotateControl: true
+		zoomControl: true
 	};
 
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),

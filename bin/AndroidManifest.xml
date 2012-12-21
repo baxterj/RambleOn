@@ -35,7 +35,7 @@
         <activity
             android:name=".RambleOn"
             android:label="@string/title_activity_ramble_on" 
-            android:configChanges="keyboardHidden|keyboard|screenSize|locale"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
