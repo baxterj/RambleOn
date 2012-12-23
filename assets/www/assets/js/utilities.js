@@ -110,3 +110,11 @@ function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 	out += '<b>Keywords: </b>' + data.keywords + '<br />\n'
 	return out
 }
+
+function showAjaxLoad(bool){
+	if(bool){
+		$.mobile.activePage.find('[data-role="header"]').append('<div class="ajax_load"></div>')
+	}else{
+		$.mobile.activePage.find('[data-role="header"] .ajax_load').remove()
+	}
+}

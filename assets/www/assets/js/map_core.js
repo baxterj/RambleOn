@@ -46,26 +46,24 @@ function loadRoute(data, messageTarget){
 		createFavDoneButtons(data.id, data.fav, data.done)
 
 		updateNotesPhotos(maps.routeMap)
-		google.maps.event.addListener(maps.routeMap, 'dragend', function() {
+		google.maps.event.addListener(maps.routeMap, 'idle', function() {
 			updateNotesPhotos(maps.routeMap)
 		})
-		google.maps.event.addListener(maps.routeMap, 'zoom_changed', function() {
-			updateNotesPhotos(maps.routeMap)
-		})
-
 
 	}
 }
 
 function updateNotesPhotos(map){
 
+	clearTimeout(refreshTimer)
+	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
+
 	if(noteImageRefreshEnabled){
 		noteImageRefreshEnabled = false
 		getNotesPhotos(map)
 	}
 
-	clearTimeout(refreshTimer)
-	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
+	
 	
 }
 
@@ -84,7 +82,7 @@ function drawNotes(data, messageTarget){
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(data.objects[i].lat, data.objects[i].lng),
 			map: activeMap,
-			//icon: '../images/TODO IMAGE'
+			icon: 'assets/images/note-map-icon.png',
 			title: data.objects[i].title,
 			num: i,
 			optimized: false,
@@ -98,7 +96,9 @@ function drawNotes(data, messageTarget){
 }
 
 function showNoteContent(marker){
-	var html = notesContent[marker.num].id + ': '+ notesContent[marker.num].title
+	var cont = notesContent[marker.num]
+	var html = '<div class="note_title">' + cont.title + '</div>\n'
+	html += '<div class="note_content">' + cont.content + '</div>\n'
 	infowindow.setContent(html)
 	infowindow.open(activeMap, marker)
 }
@@ -120,13 +120,13 @@ function drawImages(data, messageTarget){
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(data.objects[i].lat, data.objects[i].lng),
 			map: activeMap,
-			//icon: '../images/TODO IMAGE'
+			icon: 'assets/images/image-map-icon.png',
 			title: data.objects[i].title,
 			num: i,
 			optimized: false,
 			clickable: true
 		});
-		noteMarkers.push(marker)
+		imageMarkers.push(marker)
 		google.maps.event.addListener(marker,"click",function(){
 			showImageContent(this)
 		});

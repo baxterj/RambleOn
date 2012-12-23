@@ -26,6 +26,12 @@
 	float: left;
 }
 
+.routelist_keywords{
+	font-size:9pt;
+	padding: 2pt 0 0 0;
+	clear:both;
+}
+
 .routelist_icons{
 	padding:1pt 3pt 1pt 3pt;
 	background-color: #D7D7D7;
@@ -79,4 +85,14 @@
 
 .route_favbuttons a img{
 	margin-top:-2px;
+}
+
+.ajax_load{
+	display: block;
+	width: 32px;
+	height: 32px;
+	background-image: url('../images/ajax-loader.gif');
+	position: fixed;
+	top: 5px;
+	left: 35px;
 }

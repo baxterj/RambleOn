@@ -1,5 +1,8 @@
 var apiUrl = 'http://www.rambleonline.com/api/v1/'
 var routesListType = 'my' //my, fav, done, saved
+var routesListData
+var routesListMsgTarget
+
 
 $('#page-routesList').live('pageshow', function(event, data){
 	if(data.prevPage.attr('id') == 'page-home'){
@@ -66,28 +69,46 @@ function getMyRoutesItems(messageTarget, listType){
 
 function successRoutesList(data, messageTarget){
 	var html = ''
+	if(data != null){
+		routesListData = data
+	}else{
+		data = routesListData
+	}
+
+	if(messageTarget != null){
+		routesListMsgTarget = messageTarget
+	}else{
+		messageTarget = routesListMsgTarget
+	}
+	
+	
 	if(data.meta.total_count < 1){
 		messageTarget.html('No routes found for user: ' + window.localStorage.getItem("user"))
 	}else{
+		$.mobile.activePage.find('.routeList_' + routesListType + ' a').addClass('ui-btn-active').addClass('ui-state-persist')
 		if(routesListType == 'my'){
+			pageHeader('My Routes')
 			for(var i = 0; i < data.objects.length; i++){
 				if(data.objects[i].owner.username.toLowerCase() == window.localStorage.getItem("user").toLowerCase()){
 					html += createRouteListItem(data.objects[i])
 				}
 			}
 		}else if(routesListType == 'fav'){
+			pageHeader('Favourite Routes')
 			for(var i = 0; i < data.objects.length; i++){
 				if(data.objects[i].fav){
 					html += createRouteListItem(data.objects[i])
 				}
 			}
 		}else if(routesListType == 'done'){
+			pageHeader('Done Routes')
 			for(var i = 0; i < data.objects.length; i++){
 				if(data.objects[i].done){
 					html += createRouteListItem(data.objects[i])
 				}
 			}
 		}else if(routesListType == 'saved'){
+			pageHeader('Saved Routes')
 			for(var i = 0; i < data.objects.length; i++){
 				html += createRouteListItem(data.objects[i])
 			}
@@ -101,14 +122,15 @@ function successRoutesList(data, messageTarget){
 }
 
 function createRouteListItem(route){
-	var html = '<li data-filtertext="'+stringifyArray(route.keywords)+'">\n'
+	var html = '<li>\n' //data-filtertext="'+stringifyArray(route.keywords)+'">\n'
 	html += '<a href="route.html?id='+route.id+'">\n'
 	html += '<div class="routelist_title">' + route.name + '</div>\n'
 	html += '<div class="routelist_owner'+isUserClass(route.owner.username)+'">Owner: ' + route.owner.username + '</div>\n'
 	html += '<div class="routelist_icons">\n'
 	html += '<div class="routelist_fav fav_'+route.fav+'"></div>\n'
 	html += '<div class="routelist_done done_'+route.done+'"></div>\n'
-	html += '</div>'
+	html += '</div>\n'
+	html += '<div class="routelist_keywords">Keywords: ' + stringifyArray(route.keywords)+'</div>\n'
 	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
 	html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
 	html += '</a></li>\n'
@@ -162,6 +184,7 @@ function getNotesPhotos(map){
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success
 function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){
+	showAjaxLoad(true)
 	var auth=''
 	if(useAuth){
 		user = window.localStorage.getItem("user")
@@ -178,11 +201,13 @@ function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAut
 		crossDomain: true,
 		processData: false,
 		success: function(data, status, jqXHR) {
+			showAjaxLoad(false)
 			if(successFunc != null){
 				successFunc(data, messageTarget)
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			showAjaxLoad(false)
 			messageTarget.html(jQuery.parseJSON(jqXHR.responseText).error_message)
 		}
 	})
