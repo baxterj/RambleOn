@@ -9,6 +9,8 @@ var maps = {
 	createMap: null
 }
 
+var activeMarker
+
 var infowindow = new google.maps.InfoWindow({
 	content: ''
 	//maxWidth:...
@@ -100,7 +102,11 @@ function showNoteContent(marker){
 	var html = '<div class="note_title">' + cont.title + '</div>\n'
 	html += '<div class="note_content">' + cont.content + '</div>\n'
 	infowindow.setContent(html)
-	infowindow.open(activeMap, marker)
+	if(activeMarker != null){
+		activeMarker.setMap(null)
+	}
+	activeMarker = cloneMarker(marker)
+	infowindow.open(activeMap, activeMarker)
 }
 
 
@@ -137,7 +143,11 @@ function showImageContent(marker){
 	var html = imagesContent[marker.num].id + ': '+ imagesContent[marker.num].title + '<br />\n'
 	html+= '<img src="'+ imagesContent[marker.num].thumbnail +'" />\n'
 	infowindow.setContent(html)
-	infowindow.open(activeMap, marker)
+	if(activeMarker != null){
+		activeMarker.setMap(null)
+	}
+	activeMarker = cloneMarker(marker)
+	infowindow.open(activeMap, activeMarker)
 }
 
 
@@ -206,4 +216,17 @@ function sortMapHeight(){
 
 function generateThumbCoords(){
 	//possibly do on server
+}
+
+function cloneMarker(marker){
+	newMarker = new google.maps.Marker({
+			position: marker.position,
+			map: marker.map,
+			icon: marker.icon,
+			title: marker.title,
+			num: marker.num,
+			optimized: marker.optimized,
+			clickable: marker.clickable
+		});
+	return newMarker
 }
