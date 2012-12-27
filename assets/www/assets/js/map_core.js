@@ -10,6 +10,7 @@ var maps = {
 }
 
 var activeMarker
+var activeRouteMarker
 
 var infowindow = new google.maps.InfoWindow({
 	content: ''
@@ -18,17 +19,30 @@ var infowindow = new google.maps.InfoWindow({
 
 var notesContent = []
 var imagesContent = []
+var routesContent = []
 
 var noteMarkers = new google.maps.MVCArray();
 var imageMarkers = new google.maps.MVCArray();
+var routeMarkers = new google.maps.MVCArray();
 
 var noteImageRefreshEnabled = true
 var refreshTimer
+var routeRefreshEnabled = true
+var routeRefreshTimer
 
 $('#page-viewRoute').live('pageshow', function(event){
 	sortMapHeight()
-	createMap()
+	createMapRoute()
+	activeMap = maps.routeMap
+	
 	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 500); //url vars dont load before this event fires so we wait
+})
+
+$('#page-searchRoute').live('pageshow', function(event){
+	sortMapHeight('.map_page_nonmap')
+	createMapSearch()
+	activeMap = maps.searchMap
+	
 })
 
 
@@ -37,7 +51,7 @@ function loadRoute(data, messageTarget){
 	if(maps.routeMap == null){//map not loaded yet, try again in 1 second
 		setTimeout("loadRoute(data, messageTarget)", 1000);
 	}else{
-		activeMap = maps.routeMap
+		//activeMap = maps.routeMap
 
 		maps.routeMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
 		maps.routeMap.route = makePolyLine()
@@ -47,34 +61,85 @@ function loadRoute(data, messageTarget){
 		$.mobile.activePage.find('#routeInfo p').html(routeInfoHTML(data))
 		createFavDoneButtons(data.id, data.fav, data.done)
 
-		updateNotesPhotos(maps.routeMap)
-		google.maps.event.addListener(maps.routeMap, 'idle', function() {
-			updateNotesPhotos(maps.routeMap)
-		})
+
 
 	}
 }
 
-function updateNotesPhotos(map){
+function updateNotesPhotos(map, limitByZoom){
+	if(limitByZoom && activeMap.getZoom() > 9){
+		clearTimeout(refreshTimer)
+		refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
 
-	clearTimeout(refreshTimer)
-	refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
-
-	if(noteImageRefreshEnabled){
-		noteImageRefreshEnabled = false
-		getNotesPhotos(map)
+		if(noteImageRefreshEnabled){
+				noteImageRefreshEnabled = false
+				getNotesPhotos(map)
+		}
+	}else{
+		clearNoteMarkers()
+		clearImageMarkers()
 	}
+	
 
+}
+
+function updateSearchRoutes(map){
+	clearTimeout(routeRefreshTimer)
+	routeRefreshTimer = setTimeout("routeRefreshEnabled = true", 500);
+
+	if(routeRefreshEnabled){
+		routeRefreshEnabled = false
+		getSearchRoutes(map)
+	}
+}
+
+function drawRoutes(data, messageTarget){
+	clearRouteMarkers()
+
+	routesContent = data.objects
+
+	var marker
+	for(var i = 0; i < data.objects.length; i++){
+		//make marker for each
+		marker = new google.maps.Marker({
+			position: new google.maps.LatLng(data.objects[i].pathpoints[0].lat, data.objects[i].pathpoints[0].lng),
+			map: activeMap,
+			icon: 'assets/images/route-map-icon.png',
+			title: data.objects[i].name,
+			num: i,
+			optimized: false,
+			clickable: true,
+			zIndex: 99999
+		});
+		routeMarkers.push(marker)
+		google.maps.event.addListener(marker,"click",function(){
+			showRouteContent(this)
+		});
+
+	}
+}
+
+function showRouteContent(marker){
+	if(maps.searchMap.route != null){
+		maps.searchMap.route.setMap(null)
+	}
 	
-	
+
+	var data = routesContent[marker.num]
+	maps.searchMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
+	maps.searchMap.route = makePolyLine()
+	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
+	buildPathFromCoords(data, maps.searchMap.route)
+	$.mobile.activePage.find('#search-routeInfo p').html(routeInfoHTML(data))
+	createFavDoneButtons(data.id, data.fav, data.done)
+	$.mobile.activePage.find('.search_routelink a').attr('href', 'route.html?id='+data.id)
+
+	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-routeInfo' })//TODO
 }
 
 function drawNotes(data, messageTarget){
 
-	for(var i = 0; i < noteMarkers.getLength(); i++){ 
-		noteMarkers.getAt(i).setMap(null)
-	}
-	noteMarkers.clear()
+	clearNoteMarkers()
 
 	notesContent = data.objects
 	
@@ -113,10 +178,7 @@ function showNoteContent(marker){
 
 function drawImages(data, messageTarget){
 
-	for(var i = 0; i < imageMarkers.getLength(); i++){ 
-		imageMarkers.getAt(i).setMap(null)
-	}
-	imageMarkers.clear()
+	clearImageMarkers()
 
 	imagesContent = data.objects
 
@@ -150,9 +212,29 @@ function showImageContent(marker){
 	infowindow.open(activeMap, activeMarker)
 }
 
+function clearNoteMarkers(){
+	for(var i = 0; i < noteMarkers.getLength(); i++){ 
+		noteMarkers.getAt(i).setMap(null)
+	}
+	noteMarkers.clear()
+}
+
+function clearImageMarkers(){
+	for(var i = 0; i < imageMarkers.getLength(); i++){ 
+		imageMarkers.getAt(i).setMap(null)
+	}
+	imageMarkers.clear()
+}
+
+function clearRouteMarkers(){
+	for(var i = 0; i < routeMarkers.getLength(); i++){ 
+		routeMarkers.getAt(i).setMap(null)
+	}
+	routeMarkers.clear()
+}
 
 
-function createMap(){
+function createMapRoute(){
 	var mapOptions = {
 		center: new google.maps.LatLng(50.848115, -0.11364),
 		zoom: mapZoom,
@@ -162,6 +244,41 @@ function createMap(){
 
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),
 		mapOptions);
+
+	updateNotesPhotos(maps.routeMap)
+	google.maps.event.addListener(maps.routeMap, 'idle', function() {
+		updateNotesPhotos(maps.routeMap)
+	})
+
+}
+
+function createMapSearch(){
+	var mapOptions = {
+		center: new google.maps.LatLng(50.848115, -0.11364),
+		zoom: 5,
+		mapTypeId: google.maps.MapTypeId.TERRAIN,
+		zoomControl: true
+	};
+
+	var oldCenter
+	var oldZoom
+	if(maps.searchMap != null){
+		oldCenter = maps.searchMap.getCenter()
+		oldZoom = maps.searchMap.getZoom()
+	}
+
+	maps.searchMap = new google.maps.Map(document.getElementById("map_canvas_search"),
+		mapOptions);
+
+	if(oldCenter != null){
+		maps.searchMap.setCenter(oldCenter)
+		maps.searchMap.setZoom(oldZoom)
+	}
+
+	google.maps.event.addListener(maps.searchMap, 'idle', function() {
+		updateNotesPhotos(maps.searchMap, true)
+		updateSearchRoutes(maps.searchMap)
+	})
 
 }
 
@@ -208,10 +325,16 @@ function setMapZoom(zoomout){
 	}
 }
 
-function sortMapHeight(){
+function sortMapHeight(nonMapContentClass){
 	$.mobile.activePage.find('.map_content').css('height', $(window).height()
 	 - $.mobile.activePage.find('.map_header').outerHeight()
 	 - $.mobile.activePage.find('.ui-footer').outerHeight() )
+
+	if(nonMapContentClass != null){
+		$.mobile.activePage.find('.map_canvas').css('height', 
+			$.mobile.activePage.find('.map_content').outerHeight() 
+			- $.mobile.activePage.find(nonMapContentClass).outerHeight() )
+	}
 }
 
 function generateThumbCoords(){

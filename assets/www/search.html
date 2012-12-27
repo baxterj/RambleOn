@@ -13,33 +13,65 @@
 	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyA1Oz8ZnLZ_mfkby54M_sdRzh8EAfAyRNA&sensor=true">
+	</script>
+
 	<script src="assets/js/utilities.js"></script>
+
+	<link rel="stylesheet" href="assets/css/map_core.css" />
+	<script src="assets/js/map_core.js"></script>
+	<script src="assets/js/map_draw_route.js"></script>
 
 
 </head> 
+<body>
 
-<div data-role="page">
+	<div data-role="page" id="page-searchRoute">
 
 
 
-	<div data-role="header" data-theme="d">
-		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>Search</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
-	</div><!-- /header -->
+		<div data-role="header" data-theme="d" class="map_header">
+			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<h1>Search Routes</h1>
+			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
+		</div><!-- /header -->
 
-	<div data-role="content" class="ui-content">	
+		<div data-role="content" class="map_content">	
+			<div class="map_page_nonmap">
+				Search stuff here
+			</div>
+			<div id="map_canvas_search" class="map_canvas"></div>
 
-		Search stuff here
+		</div><!-- /content -->
 
-	</div><!-- /content -->
+		
 
-	
+		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
-	</div><!-- /footer -->
-</div><!-- /page -->
+			<a href="#search-routeInfo" data-rel="popup">Route Info</a>
+			<div data-role="popup" id="search-routeInfo" class="popup">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+
+				<p>No Route Selected</p>
+
+				
+
+				<div class="search_routelink">
+					<a href="#" data-inline="true" data-role="button" data-mini="true">Go to Route</a>
+				</div>
+
+				<div class="search_favdone">
+					<div data-role="controlgroup" data-type="horizontal" data-mini="true" class="route_favbuttons">
+						<a href="#" class="favBtn" data-role="button"><img src="assets/images/fav_false_mini.png" /></a>
+						<a href="#" class="doneBtn" data-role="button"><img src="assets/images/done_false_mini.png" /></a>
+					</div>
+				</div>
+
+			</div><!--popup-->
+
+		</div><!-- /footer -->
+	</div><!-- /page -->
 
 </body>
 </html>

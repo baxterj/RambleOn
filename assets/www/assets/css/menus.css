@@ -93,6 +93,16 @@
 	height: 32px;
 	background-image: url('../images/ajax-loader.gif');
 	position: fixed;
-	top: 5px;
+	top: 4px;
 	left: 35px;
+}
+
+.search_favdone{
+	text-align: center;
+	padding: 5px;
+}
+
+.search_routelink{
+	text-align: center;
+	padding: 0px 5px 0px 5px;
 }

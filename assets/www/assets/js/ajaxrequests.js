@@ -181,6 +181,11 @@ function getNotesPhotos(map){
 	sendAjax(data, null, drawImages, 'image', 'GET', true)
 }
 
+function getSearchRoutes(map){
+	var data = 'bounds='+ map.getBounds().toUrlValue()
+	sendAjax(data, null, drawRoutes, 'route', 'GET', true)
+}
+
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success
 function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){
