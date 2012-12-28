@@ -213,7 +213,9 @@ function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAut
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			showAjaxLoad(false)
-			messageTarget.html(jQuery.parseJSON(jqXHR.responseText).error_message)
+			if(messageTarget != null){
+				messageTarget.html(jQuery.parseJSON(jqXHR.responseText).error_message)
+			}
 		}
 	})
 

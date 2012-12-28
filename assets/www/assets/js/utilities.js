@@ -2,6 +2,9 @@ function stripPX(inp){
 	return inp.split('px', [0])
 }
 
+$(document).on('pageinit','[data-role=page]', function(){
+	$('[data-position=fixed]').fixedtoolbar({ tapToggle:false});
+});
 
 function validateField(field, fieldName, messageTarget, rule, required, min, max){
 	var text = field.val()
@@ -43,6 +46,9 @@ function testInputRule(rule, text){
 		return reg.test(text)
 	}else if(rule == 'password'){
 		var reg = /^[\w!@#%&/(){}[\]=?+*^~\-.:,;]{1,32}$/
+		return reg.test(text)
+	}else if(rule == 'num'){
+		var reg = /^[0-9]*$/
 		return reg.test(text)
 	}
 	return false

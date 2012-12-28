@@ -9,6 +9,12 @@ var maps = {
 	createMap: null
 }
 
+var geoLocOptions = { 
+	maximumAge: 3000,
+	//timeout: 5000,
+	enableHighAccuracy: true
+}
+
 var activeMarker
 var activeRouteMarker
 
@@ -16,6 +22,8 @@ var infowindow = new google.maps.InfoWindow({
 	content: ''
 	//maxWidth:...
 });
+
+var geocoder
 
 var notesContent = []
 var imagesContent = []
@@ -46,6 +54,20 @@ $('#page-searchRoute').live('pageshow', function(event){
 })
 
 
+function findMapLocation(distance, units, location, messageTarget){
+	geocoder = new google.maps.Geocoder();
+	geocoder.geocode( { 'address': location }, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			activeMap.setCenter(results[0].geometry.location);
+			activeMap.setZoom(calcSearchZoom(distance, units))
+		}else{
+			messageTarget.html('Could not find address')
+		}
+
+	});
+
+}
+
 
 function loadRoute(data, messageTarget){
 	if(maps.routeMap == null){//map not loaded yet, try again in 1 second
@@ -67,7 +89,16 @@ function loadRoute(data, messageTarget){
 }
 
 function updateNotesPhotos(map, limitByZoom){
-	if(limitByZoom && activeMap.getZoom() > 9){
+	var doUpdate = true
+	if(limitByZoom){
+		if(activeMap.getZoom() < 9){
+			clearNoteMarkers()
+			clearImageMarkers()
+			doUpdate = false
+		}
+	}
+	
+	if(doUpdate){
 		clearTimeout(refreshTimer)
 		refreshTimer = setTimeout("noteImageRefreshEnabled = true", 500);
 
@@ -75,11 +106,7 @@ function updateNotesPhotos(map, limitByZoom){
 				noteImageRefreshEnabled = false
 				getNotesPhotos(map)
 		}
-	}else{
-		clearNoteMarkers()
-		clearImageMarkers()
 	}
-	
 
 }
 
@@ -134,7 +161,7 @@ function showRouteContent(marker){
 	createFavDoneButtons(data.id, data.fav, data.done)
 	$.mobile.activePage.find('.search_routelink a').attr('href', 'route.html?id='+data.id)
 
-	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-routeInfo' })//TODO
+	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })//TODO
 }
 
 function drawNotes(data, messageTarget){
@@ -278,6 +305,7 @@ function createMapSearch(){
 	google.maps.event.addListener(maps.searchMap, 'idle', function() {
 		updateNotesPhotos(maps.searchMap, true)
 		updateSearchRoutes(maps.searchMap)
+		console.log(maps.searchMap.getZoom())
 	})
 
 }
@@ -337,9 +365,6 @@ function sortMapHeight(nonMapContentClass){
 	}
 }
 
-function generateThumbCoords(){
-	//possibly do on server
-}
 
 function cloneMarker(marker){
 	newMarker = new google.maps.Marker({
@@ -352,4 +377,66 @@ function cloneMarker(marker){
 			clickable: marker.clickable
 		});
 	return newMarker
+}
+
+function calcSearchZoom(distance, units){
+	var meters = 10000
+	if(units=='feet'){
+		meters = distance / 3
+	}else if(units=='meters'){
+		meters = distance
+	}else if(units=='kilometers'){
+		meters = distance * 1000
+	}else if(units=='miles'){
+		meters = distance * 1600
+	}
+
+	if(distance == null || distance==''){
+		meters = 10000
+	}
+
+	if(meters < 500){
+		return 15
+	}else if(meters < 2000){
+		return 14
+	}else if(meters < 4000){
+		return 12
+	}else if(meters < 8000){
+		return 11
+	}else if(meters < 40000){
+		return 10
+	}else if(meters < 100000){
+		return 9
+	}else if(meters < 200000){
+		return 7
+	}else{
+		return 6
+	}
+}
+
+
+
+
+
+function currentPosition(){
+	showAjaxLoad(true)
+	navigator.geolocation.getCurrentPosition(getPositionSuccess, getPositionError, geoLocOptions);
+}
+
+function getPositionSuccess(position){
+	showAjaxLoad(false)
+	if($.mobile.activePage.attr('id') == 'page-searchRoute'){
+		$.mobile.activePage.find('#searchLocation').val( 
+			Math.round( position.coords.latitude * 1000000 ) / 1000000 + ', ' //rounds to 6 DP
+			 + Math.round( position.coords.longitude * 1000000 ) / 1000000
+		)
+	}
+	
+}
+
+function getPositionError(error) {
+	showAjaxLoad(false)
+	alert('fail')
+    alert('code: '    + error.code    + '\n' +
+          'message: ' + error.message + '\n');
 }

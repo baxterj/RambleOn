@@ -12,11 +12,11 @@ public class RambleOn extends DroidGap {
         super.onCreate(savedInstanceState);  
         super.loadUrl("file:///android_asset/www/login.html"); 
     }                                                        
-    
+      
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {  
         getMenuInflater().inflate(R.menu.activity_ramble_on, menu);
         return true;
     }  
 } 
- 
+     
