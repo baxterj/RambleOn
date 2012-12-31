@@ -186,6 +186,32 @@ function getSearchRoutes(map){
 	sendAjax(data, null, drawRoutes, 'route', 'GET', true)
 }
 
+function sendNewRoute(line, name, priv, keywords){
+	
+	var pathpoints = []
+	var path = line.getPath()
+	for(var i = 0; i < path.getLength(); i++){
+		pathpoints.push({
+			'lat': path.getAt(i).lat(),
+			'lng': path.getAt(i).lng()
+		})
+
+	}
+	var data = JSON.stringify({
+		'name': name,
+		'private': priv,
+		'keywords': keywords.split(' '),
+		'mapThumbnail': 'aa',
+		'pathpoints': pathpoints
+	})
+	sendAjax(data, null, successNewRoute, 'route', 'POST', true)
+
+}
+
+function successNewRoute(data, messageTarget){
+	$.mobile.changePage('route.html?id='+data.id)
+}
+
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success
 function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){

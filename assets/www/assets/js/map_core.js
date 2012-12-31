@@ -15,6 +15,8 @@ var geoLocOptions = {
 	enableHighAccuracy: true
 }
 
+var createLine
+
 var activeMarker
 var activeRouteMarker
 
@@ -32,6 +34,7 @@ var routesContent = []
 var noteMarkers = new google.maps.MVCArray();
 var imageMarkers = new google.maps.MVCArray();
 var routeMarkers = new google.maps.MVCArray();
+var createMarkers = new google.maps.MVCArray();
 
 var noteImageRefreshEnabled = true
 var refreshTimer
@@ -53,6 +56,15 @@ $('#page-searchRoute').live('pageshow', function(event){
 	
 })
 
+$('#page-createByHand').live('pageshow', function(event){
+	sortMapHeight()
+	createMapByHand()
+	activeMap = maps.createMap
+	
+})
+
+
+
 
 function findMapLocation(distance, units, location, messageTarget){
 	geocoder = new google.maps.Geocoder();
@@ -73,8 +85,6 @@ function loadRoute(data, messageTarget){
 	if(maps.routeMap == null){//map not loaded yet, try again in 1 second
 		setTimeout("loadRoute(data, messageTarget)", 1000);
 	}else{
-		//activeMap = maps.routeMap
-
 		maps.routeMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
 		maps.routeMap.route = makePolyLine()
 		maps.routeMap.route.setMap(maps.routeMap); //assign route poly to route map
@@ -92,8 +102,8 @@ function updateNotesPhotos(map, limitByZoom){
 	var doUpdate = true
 	if(limitByZoom){
 		if(activeMap.getZoom() < 9){
-			clearNoteMarkers()
-			clearImageMarkers()
+			clearMarkerArray(noteMarkers)
+			clearMarkerArray(imageMarkers)
 			doUpdate = false
 		}
 	}
@@ -121,7 +131,7 @@ function updateSearchRoutes(map){
 }
 
 function drawRoutes(data, messageTarget){
-	clearRouteMarkers()
+	clearMarkerArray(routeMarkers)
 
 	routesContent = data.objects
 
@@ -166,7 +176,7 @@ function showRouteContent(marker){
 
 function drawNotes(data, messageTarget){
 
-	clearNoteMarkers()
+	clearMarkerArray(noteMarkers)
 
 	notesContent = data.objects
 	
@@ -205,7 +215,7 @@ function showNoteContent(marker){
 
 function drawImages(data, messageTarget){
 
-	clearImageMarkers()
+	clearMarkerArray(imageMarkers)
 
 	imagesContent = data.objects
 
@@ -239,25 +249,72 @@ function showImageContent(marker){
 	infowindow.open(activeMap, activeMarker)
 }
 
-function clearNoteMarkers(){
-	for(var i = 0; i < noteMarkers.getLength(); i++){ 
-		noteMarkers.getAt(i).setMap(null)
+function clearMarkerArray(arr){
+	for(var i = 0; i < arr.getLength(); i++){ 
+		arr.getAt(i).setMap(null)
 	}
-	noteMarkers.clear()
+	arr.clear()
 }
 
-function clearImageMarkers(){
-	for(var i = 0; i < imageMarkers.getLength(); i++){ 
-		imageMarkers.getAt(i).setMap(null)
+function setNewMap(arr, map){
+	for(var i = 0; i < arr.getLength(); i++){ 
+		arr.getAt(i).setMap(map)
 	}
-	imageMarkers.clear()
 }
 
-function clearRouteMarkers(){
-	for(var i = 0; i < routeMarkers.getLength(); i++){ 
-		routeMarkers.getAt(i).setMap(null)
-	}
-	routeMarkers.clear()
+// function clearNoteMarkers(){
+// 	for(var i = 0; i < noteMarkers.getLength(); i++){ 
+// 		noteMarkers.getAt(i).setMap(null)
+// 	}
+// 	noteMarkers.clear()
+// }
+
+// function clearImageMarkers(){
+// 	for(var i = 0; i < imageMarkers.getLength(); i++){ 
+// 		imageMarkers.getAt(i).setMap(null)
+// 	}
+// 	imageMarkers.clear()
+// }
+
+// function clearRouteMarkers(){
+// 	for(var i = 0; i < routeMarkers.getLength(); i++){ 
+// 		routeMarkers.getAt(i).setMap(null)
+// 	}
+// 	routeMarkers.clear()
+// }
+
+function newRoutePoint(map, event){
+	var path = createLine.getPath();
+	num = path.getLength();
+	path.push(event.latLng);
+
+	var marker = new google.maps.Marker({
+		position: event.latLng,
+		title: ''+num,
+		map: map,
+		num: num,
+		icon: 'assets/images/routepoint-map-icon.png',
+		zIndex: 99999,
+		draggable: true
+	});
+	createMarkers.push(marker);
+
+	google.maps.event.addListener(marker, 'dragend', function(){
+		path.setAt(this.num, this.getPosition());
+	});
+
+	google.maps.event.addListener(marker, 'click', function(){
+		if (confirm('Remove Point?')) {
+			path.removeAt(this.num)
+			this.setMap(null)
+			createMarkers.removeAt(this.num)
+			for(var i = 0; i < createMarkers.getLength(); i++){
+				createMarkers.getAt(i).num = i;
+			}
+		} else {
+			//nothing
+		}
+	});
 }
 
 
@@ -275,6 +332,47 @@ function createMapRoute(){
 	updateNotesPhotos(maps.routeMap)
 	google.maps.event.addListener(maps.routeMap, 'idle', function() {
 		updateNotesPhotos(maps.routeMap)
+	})
+
+}
+
+function createMapByHand(){
+	var mapOptions = {
+		center: new google.maps.LatLng(50.848115, -0.11364),
+		zoom: 5,
+		mapTypeId: google.maps.MapTypeId.TERRAIN,
+		zoomControl: true
+	};
+
+	var oldCenter
+	var oldZoom
+	if(maps.createMap != null){
+		oldCenter = maps.createMap.getCenter()
+		oldZoom = maps.createMap.getZoom()
+	}
+
+	maps.createMap = new google.maps.Map(document.getElementById("map_canvas_byhand"),
+		mapOptions);
+
+	if(oldCenter != null){
+		maps.createMap.setCenter(oldCenter)
+		maps.createMap.setZoom(oldZoom)
+	}
+
+	google.maps.event.addListener(maps.createMap, 'idle', function() {
+		updateNotesPhotos(maps.createMap, true)
+	})
+
+
+	if (createLine == null){
+		createLine = makePolyLine()
+		clearMarkerArray(createMarkers)
+	}
+	createLine.setMap(maps.createMap)
+	setNewMap(createMarkers, maps.createMap)
+
+	google.maps.event.addListener(maps.createMap, 'click', function(event) {
+		newRoutePoint(this, event)
 	})
 
 }
@@ -305,8 +403,9 @@ function createMapSearch(){
 	google.maps.event.addListener(maps.searchMap, 'idle', function() {
 		updateNotesPhotos(maps.searchMap, true)
 		updateSearchRoutes(maps.searchMap)
-		console.log(maps.searchMap.getZoom())
 	})
+
+
 
 }
 

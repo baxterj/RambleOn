@@ -15,7 +15,7 @@ function validateField(field, fieldName, messageTarget, rule, required, min, max
 		}
 	}
 	if(min){
-		if(text.length < min){
+		if(text.length < min && required){
 			messageTarget.html(fieldName + ' must be min ' + min + ' characters')
 			return false
 		}
@@ -45,7 +45,7 @@ function testInputRule(rule, text){
 		var reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 		return reg.test(text)
 	}else if(rule == 'password'){
-		var reg = /^[\w!@#%&/(){}[\]=?+*^~\-.:,;]{1,32}$/
+		var reg = /^[\w!@#%&/(){}[\]=?+*^~\-_ .:,;]{1,32}$/
 		return reg.test(text)
 	}else if(rule == 'num'){
 		var reg = /^[0-9]*$/
