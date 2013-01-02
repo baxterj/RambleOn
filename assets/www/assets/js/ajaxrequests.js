@@ -212,6 +212,42 @@ function successNewRoute(data, messageTarget){
 	$.mobile.changePage('route.html?id='+data.id)
 }
 
+function sendNewNote(title, priv, content, lat, lng){
+	var data = JSON.stringify({
+		'title': title,
+		'private': priv,
+		'content':content,
+		'lat': lat,
+		'lng': lng
+	})
+	sendAjax(data, null, successNewNote, 'note', 'POST', true)
+}
+
+function successNewNote(data, messageTarget){
+	$('#notesPhotos-newNote').popup('close')
+	setEnableNotesPhotos(true)
+	alert('Note Created!')
+}
+
+function sendNewImage(title, priv, text, lat, lng, file){
+	var data = JSON.stringify({
+		'title': title,
+		'private': priv,
+		'text':text,
+		'lat': lat,
+		'lng': lng,
+		'thumbnail': 'http://www.placekitten.com/200/200',
+		'image': file
+	})
+	sendAjax(data, null, successNewImage, 'image', 'POST', true)
+}
+
+function successNewImage(data, messageTarget){
+	$('#notesPhotos-newImage').popup('close')
+	setEnableNotesPhotos(true)
+	alert('Image Created!')
+}
+
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success
 function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){

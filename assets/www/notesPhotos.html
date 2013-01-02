@@ -2,7 +2,7 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>RambleOnline - Notes &amp; Photos</title> 
+	<title>RambleOnline - Search for Routes</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.2.0.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
@@ -13,33 +13,131 @@
 	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyA1Oz8ZnLZ_mfkby54M_sdRzh8EAfAyRNA&sensor=true">
+	</script>
+
 	<script src="assets/js/utilities.js"></script>
+
+	<link rel="stylesheet" href="assets/css/map_core.css" />
+	<script src="assets/js/map_core.js"></script>
 
 
 </head> 
+<body>
 
-<div data-role="page">
+	<div data-role="page" id="page-notesphotos">
+
+		<script type="text/javascript">
+		function createNewNote(){
+			if(validateNewNote($('#noteError'))){
+				sendNewNote($('#noteTitle').val(), $('#notePrivate').val()=='true', $('#noteContent').val(), newItemMarker.getPosition().lat(), newItemMarker.getPosition().lng())
+			}
+		}
+
+		function validateNewNote(messageTarget){
+			return validateField($('#noteTitle'), 'Note Title', messageTarget, 'alphanum', true, 1, 60)
+			&& validateField($('#noteContent'), 'Note Content', messageTarget, 'alphanum', true, 1, null)
+		}
+
+		function createNewImage(){
+			if(validateNewImage($('#imageError'))){
+				sendNewImage($('#imageTitle').val(), $('#imagePrivate').val()=='true', $('#imageText').val(), newItemMarker.getPosition().lat(), newItemMarker.getPosition().lng(), $('#imageFile').html())
+			}
+		}
+
+		function validateNewImage(messageTarget){
+			return validateField($('#imageTitle'), 'Image Title', messageTarget, 'alphanum', true, 1, 60)
+			&& validateField($('#imageText'), 'Image Caption', messageTarget, 'alphanum', true, 1, null)
+			&& $('#imageFile').val() != null
+		}
+		</script>
 
 
+		<div data-role="header" data-theme="d" class="map_header">
+			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<h1>Notes &amp; Photos</h1>
+			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
+		</div><!-- /header -->
 
-	<div data-role="header" data-theme="d">
-		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>My Routes</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
-	</div><!-- /header -->
 
-	<div data-role="content" class="ui-content">	
+		<div data-role="content" class="map_content">	
+			<div class="map_page_nonmap" style="text-align:center; padding:5px;">
+				<a href="#notesPhotos-newNote" id="notesPhotos-newNoteBtn" data-rel="popup" data-role="button" data-inline="true" data-theme="a" data-icon="plus" data-mini="true">New Note</a>
 
-		notes &amp; photos
+				<a href="#notesPhotos-newImage" id="notesPhotos-newImageBtn" data-rel="popup" data-role="button" data-inline="true" data-theme="a" data-icon="plus" data-mini="true">New Image</a>
 
-	</div><!-- /content -->
 
-	
+				<div data-role="popup" id="notesPhotos-newNote" class="popup">
+					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+					<div style="padding:10px; width:300px">
+						<b>Create new note at marker:</b>
+						<form>
+							<label for="noteTitle" data-mini="true" >Title:</label>
+							<input name="noteTitle" id="noteTitle" data-mini="true" />
+							<label for="notePrivate" data-mini="true" >Private?</label>
+							<select name="notePrivate" id="notePrivate" data-role="slider" data-mini="true" >
+								<option value="false">No</option>
+								<option value="true">Yes</option>
+							</select> 
+							<label for="noteContent" data-mini="true" >Content:</label>
+							<input name="noteContent" id="noteContent" data-mini="true" />
+						</form><br />
+						<button onClick="createNewNote();" data-theme="a" data-mini="true">Submit</button>
+						<div class="errorMessage" id="noteError">&nbsp;</div>
+					</div>
 
-	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
-	</div><!-- /footer -->
-</div><!-- /page -->
+				</div><!--popup-->
+
+				
+				<div data-role="popup" id="notesPhotos-newImage" class="popup">
+					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+					<div style="padding:10px; width:300px">
+						<b>Create new image at marker:</b>
+						<form>
+							<label for="imageTitle" data-mini="true" >Title:</label>
+							<input name="imageTitle" id="imageTitle" data-mini="true" />
+							<label for="imagePrivate" data-mini="true" >Private?</label>
+							<select name="imagePrivate" id="imagePrivate" data-role="slider" data-mini="true" >
+								<option value="false">No</option>
+								<option value="true">Yes</option>
+							</select> 
+							<label for="imageText" data-mini="true" >Caption:</label>
+							<input name="imageText" id="imageText" data-mini="true" />
+							<label data-mini="true">File:</label>
+							<button onClick="capturePhoto()" data-inline="true" data-theme="a" data-mini="true">Take Photo</button>
+							<button onClick="findPhoto()" data-inline="true" data-theme="a" data-mini="true">From File</button><br/>
+							<div class="imageStatus">No Image Selected</div>
+							<div style="display:none" class="imageSrc" id="imageFile"></div>
+
+
+						</form><br />
+						<button onClick="createNewImage();" data-theme="a" data-mini="true">Submit</button>
+						<div class="errorMessage" id="imageError">&nbsp;</div>
+					</div>
+
+				</div><!--popup-->
+
+			</div><!--map_page_nonmap-->
+			<div id="map_canvas_notesphotos" class="map_canvas"></div>
+
+
+			
+
+		</div><!-- /content -->
+
+		
+
+		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
+
+			<a href="#" onClick="centerMarker(newItemMarker)">Center Marker</a>
+			<a href="#" onClick="currentPosition()">My Location</a>
+			<a href="#" onClick="setEnableNotesPhotos()">Toggle Existing</a>
+
+			</div><!--popup-->
+
+		</div><!-- /footer -->
+	</div><!-- /page -->
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 var activeMap;
-var mapZoom = 12;
+var mapZoom = 10;
 var maps = {
 	routeMap: null,
 	editMap: null,
@@ -9,6 +9,8 @@ var maps = {
 	createMap: null
 }
 
+var enableNotesPhotos = true
+
 var geoLocOptions = { 
 	maximumAge: 3000,
 	//timeout: 5000,
@@ -17,12 +19,13 @@ var geoLocOptions = {
 
 var createLine
 
+
+var newItemMarker
 var activeMarker
 var activeRouteMarker
 
 var infowindow = new google.maps.InfoWindow({
 	content: ''
-	//maxWidth:...
 });
 
 var geocoder
@@ -60,6 +63,13 @@ $('#page-createByHand').live('pageshow', function(event){
 	sortMapHeight()
 	createMapByHand()
 	activeMap = maps.createMap
+	
+})
+
+$('#page-notesphotos').live('pageshow', function(event){
+	sortMapHeight('.map_page_nonmap')
+	createMapNotesPhotos()
+	activeMap = maps.noteMap
 	
 })
 
@@ -239,8 +249,16 @@ function drawImages(data, messageTarget){
 }
 
 function showImageContent(marker){
-	var html = imagesContent[marker.num].id + ': '+ imagesContent[marker.num].title + '<br />\n'
-	html+= '<img src="'+ imagesContent[marker.num].thumbnail +'" />\n'
+	var html = '<div class="noteImageContent">\n'
+	html+= '<div class="ni-title">'+ imagesContent[marker.num].title + '</div><br />\n'
+	html+= '<img width="100" src="data:image/jpeg;base64,'+ imagesContent[marker.num].image +'" /><br />\n'
+	html+= '<p>' + imagesContent[marker.num].text + '</p>\n'
+	html+= '<div class="ni-info"><b>Owner: </b>' + imagesContent[marker.num].owner.username + '<br />\n'
+	html+= '<b>Private: </b>' + yesTrue(imagesContent[marker.num].private) + '<br />\n'
+	html+= '<b>Created: </b>' + imagesContent[marker.num].creationDate + '<br />\n'
+	html+= '<b>Updated: </b>' + imagesContent[marker.num].updateDate + '<br />\n'
+	html+= '</div>\n'
+	html+= '</div>'
 	infowindow.setContent(html)
 	if(activeMarker != null){
 		activeMarker.setMap(null)
@@ -261,27 +279,6 @@ function setNewMap(arr, map){
 		arr.getAt(i).setMap(map)
 	}
 }
-
-// function clearNoteMarkers(){
-// 	for(var i = 0; i < noteMarkers.getLength(); i++){ 
-// 		noteMarkers.getAt(i).setMap(null)
-// 	}
-// 	noteMarkers.clear()
-// }
-
-// function clearImageMarkers(){
-// 	for(var i = 0; i < imageMarkers.getLength(); i++){ 
-// 		imageMarkers.getAt(i).setMap(null)
-// 	}
-// 	imageMarkers.clear()
-// }
-
-// function clearRouteMarkers(){
-// 	for(var i = 0; i < routeMarkers.getLength(); i++){ 
-// 		routeMarkers.getAt(i).setMap(null)
-// 	}
-// 	routeMarkers.clear()
-// }
 
 function newRoutePoint(map, event){
 	var path = createLine.getPath();
@@ -409,6 +406,53 @@ function createMapSearch(){
 
 }
 
+function createMapNotesPhotos(){
+	enableNotesPhotos = false
+	var mapOptions = {
+		center: new google.maps.LatLng(50.848115, -0.11364),
+		zoom: 5,
+		mapTypeId: google.maps.MapTypeId.TERRAIN,
+		zoomControl: true
+	};
+
+	var oldCenter
+	var oldZoom
+	if(maps.noteMap != null){
+		oldCenter = maps.noteMap.getCenter()
+		oldZoom = maps.noteMap.getZoom()
+	}
+
+	maps.noteMap = new google.maps.Map(document.getElementById("map_canvas_notesphotos"),
+		mapOptions);
+
+	if(oldCenter != null){
+		maps.noteMap.setCenter(oldCenter)
+		maps.noteMap.setZoom(oldZoom)
+	}
+
+	google.maps.event.addListener(maps.noteMap, 'idle', function() {
+		if(enableNotesPhotos){
+			updateNotesPhotos(maps.noteMap)
+		}
+		
+	})
+
+	if(newItemMarker != null){
+		newItemMarker.setMap(maps.noteMap)
+	}else{
+		newItemMarker = new google.maps.Marker({
+			position: maps.noteMap.getCenter(),
+			title: 'Created here',
+			map: maps.noteMap,
+			//icon: 'assets/images/routepoint-map-icon.png',
+			zIndex: 99999,
+			draggable: true
+		});
+	}
+
+	
+}
+
 function createFavDoneButtons(routeID, fav, done){
 	$.mobile.activePage.find('.route_favbuttons .favBtn img').attr('src', 'assets/images/fav_'+fav+'_mini.png')
 	$.mobile.activePage.find('.route_favbuttons .doneBtn img').attr('src', 'assets/images/done_'+done+'_mini.png')
@@ -478,6 +522,10 @@ function cloneMarker(marker){
 	return newMarker
 }
 
+function centerMarker(marker){
+	marker.setPosition(activeMap.getCenter())
+}
+
 function calcSearchZoom(distance, units){
 	var meters = 10000
 	if(units=='feet'){
@@ -513,7 +561,21 @@ function calcSearchZoom(distance, units){
 	}
 }
 
-
+function setEnableNotesPhotos(bool){
+	if(bool != null){
+		if(bool){
+			enableNotesPhotos = true
+			updateNotesPhotos(activeMap)
+		}else{
+			enableNotesPhotos = false
+			clearMarkerArray(noteMarkers)
+			clearMarkerArray(imageMarkers)
+		}
+	}else{
+		setEnableNotesPhotos(!enableNotesPhotos)
+	}
+	
+}
 
 
 
@@ -530,12 +592,17 @@ function getPositionSuccess(position){
 			 + Math.round( position.coords.longitude * 1000000 ) / 1000000
 		)
 	}
+
+	if($.mobile.activePage.attr('id') == 'page-notesphotos'){
+		maps.noteMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+		maps.noteMap.setZoom(12)
+		centerMarker(newItemMarker)
+	}
 	
 }
 
 function getPositionError(error) {
 	showAjaxLoad(false)
-	alert('fail')
     alert('code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
 }

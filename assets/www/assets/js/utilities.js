@@ -124,3 +124,46 @@ function showAjaxLoad(bool){
 		$.mobile.activePage.find('[data-role="header"] .ajax_load').remove()
 	}
 }
+
+function capturePhoto() {
+	navigator.camera.getPicture(capturePhotoSuccess, capturePhotoFail,
+		{
+			destinationType: Camera.DestinationType.DATA_URL,
+			quality: 50,
+			targetWidth: 800
+		});
+}
+
+function capturePhotoSuccess(imageData){
+	//TODO IMGUR
+	$.mobile.activePage.find('.imageSrc').html(imageData)
+	$.mobile.activePage.find('.imageStatus').html('>> Photo Capture Success <<')
+	$('#notesPhotos-newImage').popup('open')
+}
+
+function capturePhotoFail(failMessage){
+	$.mobile.activePage.find('.imageStatus').html('Photo capture failed:\n' + failMessage)
+}
+
+
+function findPhoto() {
+      // Retrieve image file location from specified source
+	navigator.camera.getPicture(findPhotoSuccess, findPhotoFail,
+		{ 
+			quality: 50, 
+			destinationType: Camera.DestinationType.DATA_URL,
+			sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+			targetWidth: 800
+		});
+}
+
+function findPhotoSuccess(imageData){
+	//TODO IMGUR
+	$.mobile.activePage.find('.imageSrc').html(imageData)
+	$.mobile.activePage.find('.imageStatus').html('>> Photo Upload Success <<')
+	$('#notesPhotos-newImage').popup('open')
+}
+
+function findPhotoFail(failMessage){
+	$.mobile.activePage.find('.imageStatus').html('Photo Upload failed:\n' + failMessage)
+}

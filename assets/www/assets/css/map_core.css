@@ -10,3 +10,24 @@
 .map_page_nonmap{
 	padding:5px 10px 0px 10px
 }
+
+.noteImageContent{
+	width: 90%
+}
+
+.noteImageContent div, .noteImageContent p{
+	width: 80%;
+
+}
+
+/*.imageContent img{
+	width:200px;
+}*/
+
+.noteImageContent .ni-title{
+	font-weight: bold;
+}
+
+.noteImageContent .ni-info{
+	font-size: 10pt
+}
