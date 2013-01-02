@@ -2,7 +2,7 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>RambleOnline - Home</title> 
+	<title>RambleOnline - Image</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.2.0.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
@@ -18,33 +18,36 @@
 
 </head> 
 <body>
-	<div data-role="page" id="page-home">
+	<div data-role="page" id="page-viewImage">
 
+	<script type="text/javascript">
 
+	</script>
 
 		<div data-role="header" data-theme="d">
 			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-			<h1>Home</h1>
+			<h1>View Image</h1>
 			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 		</div><!-- /header -->
 
 		<div data-role="content" class="ui-content">	
+			<div id="viewImageTitle">&nbsp;</div>
+			<div class="viewImageHolder">
+				<img id="viewImage" src="" />
+			</div>
 
-			<p><a href="create.html">Create</a></p>
-			<p><a href="search.html">Search</a></p>
-			<p><a href="myRoutes.html?list=my">My Routes</a></p>
-			<p><a href="myRoutes.html?list=saved">Saved Routes</a></p>
-			<br />
-			<p><a href="notesPhotos.html">Notes &amp; Photos</a></p>
+			<div id="viewImageText" style="padding-bottom:5px">&nbsp;</div>
 
+			<div id="viewImageInfo" style="font-size:10pt">
 
+			</div>
 
 		</div><!-- /content -->
 
 		
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-			<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
+			<a href="#" rel="external" id="imageFullLink" data-icon="delete">View Full Size</a>
 		</div><!-- /footer -->
 
 	</div><!-- /page -->

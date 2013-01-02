@@ -12,6 +12,11 @@ $('#page-routesList').live('pageshow', function(event, data){
 	}
 })
 
+$('#page-viewImage').live('pageshow', function(event){
+	setTimeout("getImage(getUrlVars()['id'])", 500); //url vars dont load before this event fires so we wait
+})
+
+
 function sendLogin(data, messageTarget){
 	var data = JSON.stringify({
 		"user": data[0],
@@ -230,22 +235,48 @@ function successNewNote(data, messageTarget){
 }
 
 function sendNewImage(title, priv, text, lat, lng, file){
-	var data = JSON.stringify({
+	var data = {
 		'title': title,
 		'private': priv,
 		'text':text,
 		'lat': lat,
-		'lng': lng,
-		'thumbnail': 'http://www.placekitten.com/200/200',
-		'image': file
-	})
-	sendAjax(data, null, successNewImage, 'image', 'POST', true)
+		'lng': lng
+	}
+	//sendAjax(data, null, successNewImage, 'image', 'POST', true)
+	sendImgur(data, file, $('#imageStatus'))
 }
 
 function successNewImage(data, messageTarget){
 	$('#notesPhotos-newImage').popup('close')
+	clearPhotoUploadPopup()
 	setEnableNotesPhotos(true)
 	alert('Image Created!')
+}
+
+function successImgur(rambledata, imgurdata, messageTarget){
+	rambledata['image'] = imgurdata.data.id + '|' + imgurdata.data.deletehash
+	rambledata['thumbnail'] = 'http://i.imgur.com/' + imgurdata.data.id +'t.jpg'
+	var data = JSON.stringify(rambledata)
+	sendAjax(data, null, successNewImage, 'image', 'POST', true)
+}
+ 
+
+function getImage(id){
+	sendAjax(null, null, displayImage, 'image/'+id, 'GET', true)
+}
+
+function displayImage(data, messageTarget){
+	$('#viewImage').attr('src', 'http://i.imgur.com/'+data.image.split('|')[0]+'l.jpg')
+
+	$('#viewImageTitle').html('<b>'+data.title+'</b>')
+	$('#viewImageText').html(data.text)
+	$('#imageFullLink').attr('href', 'http://i.imgur.com/'+data.image.split('|')[0]+'.jpg')
+
+	var html = '<b>Owner: </b>' + data.owner.username + '<br />\n'
+	html+= '<b>Private: </b>' + yesTrue(data.private) + '<br />\n'
+	html+= '<b>Created: </b>' + data.creationDate + '<br />\n'
+	html+= '<b>Updated: </b>' + data.updateDate + '<br />\n'
+	$('#viewImageInfo').html(html)
 }
 
 //Generic function for sending ajax requests, pass error message display target
@@ -282,4 +313,39 @@ function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAut
 	})
 
 
+}
+
+
+function sendImgur(rambledata, img, messageTarget){
+	//if img is gonna be a URI and not base64, need to do something here to buffered send it, else
+	//gonna run out of memory in lots of devices.
+
+	showAjaxLoad(true)
+	data = JSON.stringify({
+		image: img,
+		name: rambledata.title,
+		title: rambledata.title
+	})
+	$.ajax({
+		url: 'https://api.imgur.com/3/image' ,
+		type: 'POST',
+		contentType: 'application/json',
+		data: data,
+		dataType: 'json',
+		crossDomain: true,
+		processData: false,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader ("Authorization", "Client-ID 9cd62be48e7184a");
+		},
+		success: function(data, status, jqXHR) {
+			showAjaxLoad(false)
+			successImgur(rambledata, data, messageTarget)
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			showAjaxLoad(false)
+			if(messageTarget != null){
+				messageTarget.html(jQuery.parseJSON(jqXHR.responseText).data.error)
+			}
+		}
+	})
 }

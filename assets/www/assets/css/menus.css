@@ -106,3 +106,25 @@
 	text-align: center;
 	padding: 0px 5px 0px 5px;
 }
+
+.imageStatus{
+	font-size: 10pt;
+	padding-bottom:5px;
+}
+
+.popupTitle{
+	padding-bottom: 5px;
+}
+
+#viewImage{
+	max-width: 400px;
+	max-height: 400px;
+}
+
+.viewImageHolder{
+	text-align: center;
+}
+
+.viewImageInfo{
+	font-size: 10pt
+}

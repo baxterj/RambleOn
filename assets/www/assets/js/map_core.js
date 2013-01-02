@@ -63,6 +63,7 @@ $('#page-createByHand').live('pageshow', function(event){
 	sortMapHeight()
 	createMapByHand()
 	activeMap = maps.createMap
+	goToCurrentPosition()
 	
 })
 
@@ -70,6 +71,8 @@ $('#page-notesphotos').live('pageshow', function(event){
 	sortMapHeight('.map_page_nonmap')
 	createMapNotesPhotos()
 	activeMap = maps.noteMap
+	fillImgPopup()
+	goToCurrentPosition()
 	
 })
 
@@ -251,7 +254,8 @@ function drawImages(data, messageTarget){
 function showImageContent(marker){
 	var html = '<div class="noteImageContent">\n'
 	html+= '<div class="ni-title">'+ imagesContent[marker.num].title + '</div><br />\n'
-	html+= '<img width="100" src="data:image/jpeg;base64,'+ imagesContent[marker.num].image +'" /><br />\n'
+	html+= '<a href="viewImage.html?id='+imagesContent[marker.num].id + '">'
+	html+= '<img src="'+ imagesContent[marker.num].thumbnail +'" /> </a> <br />\n'
 	html+= '<p>' + imagesContent[marker.num].text + '</p>\n'
 	html+= '<div class="ni-info"><b>Owner: </b>' + imagesContent[marker.num].owner.username + '<br />\n'
 	html+= '<b>Private: </b>' + yesTrue(imagesContent[marker.num].private) + '<br />\n'
@@ -593,16 +597,27 @@ function getPositionSuccess(position){
 		)
 	}
 
+	
+	
+}
+
+function goToCurrentPosition(){
+	showAjaxLoad(true)
+	navigator.geolocation.getCurrentPosition(goToPositionSuccess, getPositionError, geoLocOptions);
+}
+
+function goToPositionSuccess(position){
+	showAjaxLoad(false)
+	activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+	activeMap.setZoom(12)
+
 	if($.mobile.activePage.attr('id') == 'page-notesphotos'){
-		maps.noteMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-		maps.noteMap.setZoom(12)
 		centerMarker(newItemMarker)
 	}
-	
 }
 
 function getPositionError(error) {
 	showAjaxLoad(false)
-    alert('code: '    + error.code    + '\n' +
-          'message: ' + error.message + '\n');
+	alert('code: '    + error.code    + '\n' +
+		'message: ' + error.message + '\n');
 }

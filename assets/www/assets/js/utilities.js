@@ -126,18 +126,21 @@ function showAjaxLoad(bool){
 }
 
 function capturePhoto() {
+	setImageLocalStorage()
 	navigator.camera.getPicture(capturePhotoSuccess, capturePhotoFail,
 		{
 			destinationType: Camera.DestinationType.DATA_URL,
+			//destinationType: Camera.DestinationType.FILE_URI,
 			quality: 50,
-			targetWidth: 800
+			targetWidth: 800, 
+			correctOrientation: true, //probably ignored on android
+			saveToPhotoAlbum: true //probably ignored on android
 		});
 }
 
 function capturePhotoSuccess(imageData){
-	//TODO IMGUR
 	$.mobile.activePage.find('.imageSrc').html(imageData)
-	$.mobile.activePage.find('.imageStatus').html('>> Photo Capture Success <<')
+	$.mobile.activePage.find('.imageStatus').html('Ready for upload')
 	$('#notesPhotos-newImage').popup('open')
 }
 
@@ -147,23 +150,56 @@ function capturePhotoFail(failMessage){
 
 
 function findPhoto() {
+	setImageLocalStorage()
       // Retrieve image file location from specified source
 	navigator.camera.getPicture(findPhotoSuccess, findPhotoFail,
 		{ 
-			quality: 50, 
+			quality: 100, 
 			destinationType: Camera.DestinationType.DATA_URL,
+			//destinationType: Camera.DestinationType.FILE_URI,
 			sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-			targetWidth: 800
+			targetWidth: 800, 
+			correctOrientation: true, //probably ignored on android
+
+			mediaType: Camera.MediaType.PICTURE,
 		});
 }
 
 function findPhotoSuccess(imageData){
-	//TODO IMGUR
 	$.mobile.activePage.find('.imageSrc').html(imageData)
-	$.mobile.activePage.find('.imageStatus').html('>> Photo Upload Success <<')
+	$.mobile.activePage.find('.imageStatus').html('Ready for upload')
 	$('#notesPhotos-newImage').popup('open')
 }
 
 function findPhotoFail(failMessage){
-	$.mobile.activePage.find('.imageStatus').html('Photo Upload failed:\n' + failMessage)
+	$.mobile.activePage.find('.imageStatus').html('Photo slect failed:\n' + failMessage)
 }
+
+function clearPhotoUploadPopup(){
+	clearImageLocalStorage()
+	$('#imageFile').html('')
+	$('#imageStatus').html('')
+	$('#imageText').val('')
+	$('#imageTitle').val('')
+}
+
+function setImageLocalStorage(){
+	window.localStorage.setItem("imageTitle", $('#imageTitle').val())
+	window.localStorage.setItem("imageText", $('#imageText').val())
+	window.localStorage.setItem("imagePrivate", $('#imagePrivate option:selected').val())
+}
+
+function clearImageLocalStorage(){
+	window.localStorage.setItem("imageTitle", '')
+	window.localStorage.setItem("imageText", '')
+	window.localStorage.setItem("imagePrivate", '')
+}
+
+function fillImgPopup(){
+	$('#imageTitle').val(window.localStorage.getItem("imageTitle"))
+	$('#imageText').val(window.localStorage.getItem("imageText"))
+	$('#imagePrivate').val(window.localStorage.getItem("imagePrivate")+"").slider('refresh')
+}
+
+
+
