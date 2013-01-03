@@ -2,7 +2,7 @@
 <html>
 <meta charset="UTF-8">
 <head> 
-	<title>RambleOnline - Select Create Method</title> 
+	<title>RambleOnline - Create Route</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="assets/css/jquery.mobile-1.2.0.min.css" />
 	<link rel="stylesheet" href="assets/css/core.css" />
@@ -13,34 +13,53 @@
 	<script src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="assets/js/ajaxrequests.js"></script>
 	
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyA1Oz8ZnLZ_mfkby54M_sdRzh8EAfAyRNA&sensor=true">
+	</script>
+
 	<script src="assets/js/utilities.js"></script>
+
+	<link rel="stylesheet" href="assets/css/map_core.css" />
+	<script src="assets/js/map_core.js"></script>
 
 
 </head> 
-
-<div data-role="page">
-
-
-
-	<div data-role="header" data-theme="d">
-		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>Create Type</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
-	</div><!-- /header -->
-
-	<div data-role="content" class="ui-content">	
-
-		<p><a href="trackMovement.html">Track Movement</a></p>
-		<p><a href="byHand.html">Create by Hand</a></p>
-
-	</div><!-- /content -->
-
+<body>
 	
 
-	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
-	</div><!-- /footer -->
-</div><!-- /page -->
+	<div data-role="page">
+
+
+		<div data-role="header" data-theme="d" class="map_header">
+			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<h1>Select Type</h1>
+			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
+		</div><!-- /header -->
+
+		<div data-role="content">	
+			<a href="tracked.html">Using GPS</a><br /><br />
+			<a href="byHand.html">Create by Hand</a>
+
+		</div><!-- /content -->
+
+		
+
+		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
+
+			<a href="#create-Info" id="create-popupbtn" data-rel="popup">Which do I choose?</a>
+			<div data-role="popup" id="create-Info" class="popup">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<div style="padding:10px;">
+					<p><b>Using GPS</b><br />
+						Select GPS if you are outdoors, in a vehicle, or otherwise have good visibility of the sky.  You phone's GPS will make the route for you</p>
+					<p><b>Create by Hand</b><br />
+						Create a route by hand if you are indoors or not actually taking the route now.</p>
+				</div>
+
+			</div><!--popup-->
+
+		</div><!-- /footer -->
+	</div><!-- /page -->
 
 </body>
 </html>

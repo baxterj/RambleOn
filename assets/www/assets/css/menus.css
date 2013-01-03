@@ -117,12 +117,15 @@
 }
 
 #viewImage{
-	max-width: 400px;
-	max-height: 400px;
+	max-width: 350px;
+	max-height: 350px;
+	height: 350px;
 }
 
 .viewImageHolder{
 	text-align: center;
+	height:350px;
+	margin:10px;
 }
 
 .viewImageInfo{

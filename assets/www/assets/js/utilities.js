@@ -39,7 +39,7 @@ function validateField(field, fieldName, messageTarget, rule, required, min, max
 
 function testInputRule(rule, text){
 	if(rule == 'alphanum'){
-		var reg = /^([a-zA-Z0-9 _-]+)$/
+		var reg = /^([a-zA-Z0-9 _-]*)$/
 		return reg.test(text)
 	}else if(rule == 'email'){
 		var reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/

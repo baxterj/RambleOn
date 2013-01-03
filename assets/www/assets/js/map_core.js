@@ -5,24 +5,30 @@ var maps = {
 	editMap: null,
 	searchMap: null,
 	noteMap: null,
-	trackMap: null,
+	trackedMap: null,
 	createMap: null
 }
+
 
 var enableNotesPhotos = true
 
 var geoLocOptions = { 
 	maximumAge: 3000,
-	//timeout: 5000,
+	timeout: 5000,
 	enableHighAccuracy: true
 }
-
-var createLine
-
 
 var newItemMarker
 var activeMarker
 var activeRouteMarker
+
+var currPosMarkerSettings = {
+		position: new google.maps.LatLng(0, 0),
+		title: 'You are Here',
+		//icon: 'assets/images/routepoint-map-icon.png',
+		zIndex: 99999
+	}
+var currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
 
 var infowindow = new google.maps.InfoWindow({
 	content: ''
@@ -37,12 +43,19 @@ var routesContent = []
 var noteMarkers = new google.maps.MVCArray();
 var imageMarkers = new google.maps.MVCArray();
 var routeMarkers = new google.maps.MVCArray();
-var createMarkers = new google.maps.MVCArray();
+//var createMarkers = new google.maps.MVCArray();
+var createLine
+var geoLocID
+
+
 
 var noteImageRefreshEnabled = true
 var refreshTimer
 var routeRefreshEnabled = true
 var routeRefreshTimer
+
+var recordPositionTimer
+var recordPosition = true
 
 $('#page-viewRoute').live('pageshow', function(event){
 	sortMapHeight()
@@ -63,6 +76,14 @@ $('#page-createByHand').live('pageshow', function(event){
 	sortMapHeight()
 	createMapByHand()
 	activeMap = maps.createMap
+	goToCurrentPosition()
+	
+})
+
+$('#page-createTracked').live('pageshow', function(event){
+	sortMapHeight()
+	createMapTracked()
+	activeMap = maps.trackedMap
 	goToCurrentPosition()
 	
 })
@@ -99,7 +120,7 @@ function loadRoute(data, messageTarget){
 		setTimeout("loadRoute(data, messageTarget)", 1000);
 	}else{
 		maps.routeMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
-		maps.routeMap.route = makePolyLine()
+		maps.routeMap.route = makePolyLine('#DD0000', false)
 		maps.routeMap.route.setMap(maps.routeMap); //assign route poly to route map
 		buildPathFromCoords(data, maps.routeMap.route)
 		pageHeader(data.name)
@@ -177,7 +198,7 @@ function showRouteContent(marker){
 
 	var data = routesContent[marker.num]
 	maps.searchMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
-	maps.searchMap.route = makePolyLine()
+	maps.searchMap.route = makePolyLine('#DD0000', false)
 	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
 	buildPathFromCoords(data, maps.searchMap.route)
 	$.mobile.activePage.find('#search-routeInfo p').html(routeInfoHTML(data))
@@ -203,7 +224,8 @@ function drawNotes(data, messageTarget){
 			title: data.objects[i].title,
 			num: i,
 			optimized: false,
-			clickable: true
+			clickable: true,
+			zIndex: 1
 		});
 		noteMarkers.push(marker)
 		google.maps.event.addListener(marker,"click",function(){
@@ -214,8 +236,17 @@ function drawNotes(data, messageTarget){
 
 function showNoteContent(marker){
 	var cont = notesContent[marker.num]
-	var html = '<div class="note_title">' + cont.title + '</div>\n'
-	html += '<div class="note_content">' + cont.content + '</div>\n'
+	var html = '<div class="noteImageContent">\n'
+	html+= '<div class="ni_title">' + cont.title + '</div>\n'
+	html+= '<p>' + cont.content + '</p>\n'
+	html+= '<div class="ni_info"><b>Owner: </b>' + cont.owner.username + '<br />\n'
+	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
+	html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
+	html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
+	html+= '</div>\n'
+	html+= '</div>'
+
+
 	infowindow.setContent(html)
 	if(activeMarker != null){
 		activeMarker.setMap(null)
@@ -242,7 +273,8 @@ function drawImages(data, messageTarget){
 			title: data.objects[i].title,
 			num: i,
 			optimized: false,
-			clickable: true
+			clickable: true,
+			zIndex: 1
 		});
 		imageMarkers.push(marker)
 		google.maps.event.addListener(marker,"click",function(){
@@ -252,15 +284,16 @@ function drawImages(data, messageTarget){
 }
 
 function showImageContent(marker){
+	var cont = imagesContent[marker.num]
 	var html = '<div class="noteImageContent">\n'
-	html+= '<div class="ni-title">'+ imagesContent[marker.num].title + '</div><br />\n'
-	html+= '<a href="viewImage.html?id='+imagesContent[marker.num].id + '">'
-	html+= '<img src="'+ imagesContent[marker.num].thumbnail +'" /> </a> <br />\n'
-	html+= '<p>' + imagesContent[marker.num].text + '</p>\n'
-	html+= '<div class="ni-info"><b>Owner: </b>' + imagesContent[marker.num].owner.username + '<br />\n'
-	html+= '<b>Private: </b>' + yesTrue(imagesContent[marker.num].private) + '<br />\n'
-	html+= '<b>Created: </b>' + imagesContent[marker.num].creationDate + '<br />\n'
-	html+= '<b>Updated: </b>' + imagesContent[marker.num].updateDate + '<br />\n'
+	html+= '<div class="ni_title">'+ cont.title + '</div><br />\n'
+	html+= '<a href="viewImage.html?id='+cont.id + '">'
+	html+= '<img src="'+ cont.thumbnail +'" /> </a> <br />\n'
+	html+= '<p>' + cont.text + '</p>\n'
+	html+= '<div class="ni_info"><b>Owner: </b>' + cont.owner.username + '<br />\n'
+	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
+	html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
+	html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
 	html+= '</div>\n'
 	html+= '</div>'
 	infowindow.setContent(html)
@@ -285,37 +318,40 @@ function setNewMap(arr, map){
 }
 
 function newRoutePoint(map, event){
-	var path = createLine.getPath();
-	num = path.getLength();
-	path.push(event.latLng);
+	createLine.getPath().push(event.latLng);
 
-	var marker = new google.maps.Marker({
-		position: event.latLng,
-		title: ''+num,
-		map: map,
-		num: num,
-		icon: 'assets/images/routepoint-map-icon.png',
-		zIndex: 99999,
-		draggable: true
-	});
-	createMarkers.push(marker);
+	//this code used when editable: false on polyline
+	// var path = createLine.getPath();
+	// num = path.getLength();
+	// path.push(event.latLng);
 
-	google.maps.event.addListener(marker, 'dragend', function(){
-		path.setAt(this.num, this.getPosition());
-	});
+	// var marker = new google.maps.Marker({
+	// 	position: event.latLng,
+	// 	title: ''+num,
+	// 	map: map,
+	// 	num: num,
+	// 	icon: 'assets/images/routepoint-map-icon.png',
+	// 	zIndex: 99999,
+	// 	draggable: true
+	// });
+	// createMarkers.push(marker);
 
-	google.maps.event.addListener(marker, 'click', function(){
-		if (confirm('Remove Point?')) {
-			path.removeAt(this.num)
-			this.setMap(null)
-			createMarkers.removeAt(this.num)
-			for(var i = 0; i < createMarkers.getLength(); i++){
-				createMarkers.getAt(i).num = i;
-			}
-		} else {
-			//nothing
-		}
-	});
+	// google.maps.event.addListener(marker, 'dragend', function(){
+	// 	path.setAt(this.num, this.getPosition());
+	// });
+
+	// google.maps.event.addListener(marker, 'click', function(){
+	// 	if (confirm('Remove Point?')) {
+	// 		path.removeAt(this.num)
+	// 		this.setMap(null)
+	// 		createMarkers.removeAt(this.num)
+	// 		for(var i = 0; i < createMarkers.getLength(); i++){
+	// 			createMarkers.getAt(i).num = i;
+	// 		}
+	// 	} else {
+	// 		//nothing
+	// 	}
+	// });
 }
 
 
@@ -366,11 +402,11 @@ function createMapByHand(){
 
 
 	if (createLine == null){
-		createLine = makePolyLine()
-		clearMarkerArray(createMarkers)
+		createLine = makePolyLine('#DD0000', true)
+		//clearMarkerArray(createMarkers)
 	}
 	createLine.setMap(maps.createMap)
-	setNewMap(createMarkers, maps.createMap)
+	//setNewMap(createMarkers, maps.createMap)
 
 	google.maps.event.addListener(maps.createMap, 'click', function(event) {
 		newRoutePoint(this, event)
@@ -378,10 +414,50 @@ function createMapByHand(){
 
 }
 
-function createMapSearch(){
+function createMapTracked(){
 	var mapOptions = {
 		center: new google.maps.LatLng(50.848115, -0.11364),
 		zoom: 5,
+		mapTypeId: google.maps.MapTypeId.TERRAIN,
+		zoomControl: true
+	};
+
+
+	var oldCenter
+	var oldZoom
+	if(maps.trackedMap != null){
+		oldCenter = maps.trackedMap.getCenter()
+		oldZoom = maps.trackedMap.getZoom()
+	}
+
+	maps.trackedMap = new google.maps.Map(document.getElementById("map_canvas_tracked"),
+		mapOptions);
+
+	if(oldCenter != null){
+		maps.trackedMap.setCenter(oldCenter)
+		maps.trackedMap.setZoom(oldZoom)
+	}
+
+	google.maps.event.addListener(maps.trackedMap, 'idle', function() {
+		updateNotesPhotos(maps.trackedMap, true)
+	})
+
+	// if (createLine == null){
+	// 	createLine = makePolyLine('#DD0000', false)
+	// 	//clearMarkerArray(createMarkers)
+	// }
+	// createLine.setMap(maps.trackedMap)
+	//setNewMap(createMarkers, maps.trackedMap)
+
+	trackCurrentPosition(maps.trackedMap)
+
+
+}
+
+function createMapSearch(){
+	var mapOptions = {
+		center: new google.maps.LatLng(50.848115, -0.11364),
+		zoom: 7,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -402,7 +478,9 @@ function createMapSearch(){
 	}
 
 	google.maps.event.addListener(maps.searchMap, 'idle', function() {
-		updateNotesPhotos(maps.searchMap, true)
+		if(enableNotesPhotos){
+			updateNotesPhotos(maps.searchMap, true)
+		}
 		updateSearchRoutes(maps.searchMap)
 	})
 
@@ -483,12 +561,15 @@ function buildPathFromCoords(data, polyLine){
 	}
 }
 
-function makePolyLine(){
+function makePolyLine(color, editable){
 	var polyOptions = {
-		strokeColor: '#DD0000',
+		strokeColor: color,
 		strokeOpacity: 0.8,
-		strokeWeight: 3
+		strokeWeight: 3,
+		editable: editable,
+		optimized: false
 	}
+
 	return new google.maps.Polyline(polyOptions);
 }
 
@@ -582,6 +663,11 @@ function setEnableNotesPhotos(bool){
 }
 
 
+function trackCurrentPosition(map){
+	startPositionWatch(false)
+	currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
+	currentPositionMarker.setMap(map)
+}
 
 function currentPosition(){
 	showAjaxLoad(true)
@@ -596,9 +682,20 @@ function getPositionSuccess(position){
 			 + Math.round( position.coords.longitude * 1000000 ) / 1000000
 		)
 	}
+}
 
-	
-	
+function trackingPositionSuccess(position){
+	if(position.coords.accuracy < 10){
+
+		if(createLine != null && recordPosition){
+			createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+			recordPosition = false
+			recordPositionTimer = setTimeout("recordPosition = true", 5000);
+		}
+
+		currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+	}
+
 }
 
 function goToCurrentPosition(){
@@ -620,4 +717,26 @@ function getPositionError(error) {
 	showAjaxLoad(false)
 	alert('code: '    + error.code    + '\n' +
 		'message: ' + error.message + '\n');
+}
+
+function startPositionWatch(createRoute){
+	if(createRoute){
+		createLine = makePolyLine('#DD0000', createRoute)
+		createLine.setMap(activeMap)
+	}
+	
+	geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
+}
+
+function endPositionWatch(){
+	navigator.geolocation.clearWatch(geoLocID);
+}
+
+function pausePositionWatch(pause){
+	if(pause){
+		clearTimeout(recordPositionTimer)
+		recordPosition = false
+	}else{
+		recordPosition = true
+	}
 }

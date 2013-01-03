@@ -17,49 +17,49 @@
 
 
 </head> 
+<body>
+	<div data-role="page" id="page-routesList">
 
-<div data-role="page" id="page-routesList">
+
+		<div data-role="header" data-theme="d">
+			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<h1>Routes Lists</h1>
+			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
+
+			<div data-role="navbar" >
+				<ul data-theme="d">
+					<li class="routeList_my"><a href="#" onclick="routesListType='my'; successRoutesList(null, null)">My Routes</a></li>
+					<li class="routeList_saved"><a href="#" onclick="routesListType='saved'; successRoutesList(null, null)">All Saved</a></li>
+					<li class="routeList_fav"><a href="#" onclick="routesListType='fav'; successRoutesList(null, null)">Favourite</a></li>
+					<li class="routeList_done"><a href="#" onclick="routesListType='done'; successRoutesList(null, null)">Done</a></li>
+				</ul>
+			</div><!-- /navbar -->
+
+		</div><!-- /header -->
+
+		<div data-role="content" class="ui-content">	
+
+			
 
 
-	<div data-role="header" data-theme="d">
-		<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-		<h1>Routes Lists</h1>
-		<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 
-		<div data-role="navbar" >
-			<ul data-theme="d">
-				<li class="routeList_my"><a href="#" onclick="routesListType='my'; successRoutesList(null, null)">My Routes</a></li>
-				<li class="routeList_saved"><a href="#" onclick="routesListType='saved'; successRoutesList(null, null)">All Saved</a></li>
-				<li class="routeList_fav"><a href="#" onclick="routesListType='fav'; successRoutesList(null, null)">Favourite</a></li>
-				<li class="routeList_done"><a href="#" onclick="routesListType='done'; successRoutesList(null, null)">Done</a></li>
+			<ul data-role="listview" id="myRoutesList" data-split-icon="gear" data-split-theme="d" data-filter="true">
+				<!--li><a href="index.html">
+					<img src="images/album-bb.jpg" />
+					<h3>Broken Bells</h3>
+					<p>Broken Bells</p>
+					</a><a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+				</li-->
 			</ul>
-		</div><!-- /navbar -->
-
-	</div><!-- /header -->
-
-	<div data-role="content" class="ui-content">	
+			<p id="routesListMessage" class="errorMessage">&nbsp;</p>
+		</div><!-- /content -->
 
 		
 
-
-
-		<ul data-role="listview" id="myRoutesList" data-split-icon="gear" data-split-theme="d" data-filter="true">
-			<!--li><a href="index.html">
-				<img src="images/album-bb.jpg" />
-				<h3>Broken Bells</h3>
-				<p>Broken Bells</p>
-				</a><a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
-			</li-->
-		</ul>
-		<p id="routesListMessage" class="errorMessage">&nbsp;</p>
-	</div><!-- /content -->
-
-	
-
-	<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-		<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
-	</div><!-- /footer -->
-</div><!-- /page -->
+		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
+			<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
+		</div><!-- /footer -->
+	</div><!-- /page -->
 
 </body>
 </html>
