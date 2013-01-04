@@ -31,14 +31,27 @@
 
 
 		<div data-role="header" data-theme="d" class="map_header">
-			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<div data-type="horizontal" data-role="controlgroup" class="ui-btn-left">
+				<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+				<a href="home.html" data-role="button" data-icon="home" data-iconpos="notext">Back</a>
+			</div>
 			<h1>Select Type</h1>
 			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 		</div><!-- /header -->
 
-		<div data-role="content">	
-			<a href="tracked.html">Using GPS</a><br /><br />
-			<a href="byHand.html">Create by Hand</a>
+		<div data-role="content">
+			<div style="width:85%; margin:0 auto">	
+				<a href="tracked.html" class="createOption">
+					<h2>Track Movement</h2>
+					<img src="assets/images/create-track.png" /><br />
+					<p>Use the phone’s GPS transmitter to record your movements and build a route based on your position every few seconds.  You can pause recording at any time.</p>
+				</a>
+				<a href="byHand.html" class="createOption">
+					<h2>Create by Hand</h2>
+					<img src="assets/images/create-byhand.png" /><br />
+					<p>Press on the map to create markers which connect together to form your route.  Use to plan a walk or remember where you have been.</p>
+				</a>
+			</div>
 
 		</div><!-- /content -->
 

@@ -25,8 +25,9 @@ var activeRouteMarker
 var currPosMarkerSettings = {
 		position: new google.maps.LatLng(0, 0),
 		title: 'You are Here',
-		//icon: 'assets/images/routepoint-map-icon.png',
-		zIndex: 99999
+		icon: 'assets/images/youarehere-map-icon.png',
+		zIndex: 99999,
+		optimized: false
 	}
 var currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
 
@@ -665,7 +666,10 @@ function setEnableNotesPhotos(bool){
 
 function trackCurrentPosition(map){
 	startPositionWatch(false)
-	currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
+	if(currentPositionMarker == null){
+		currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
+	}
+	
 	currentPositionMarker.setMap(map)
 }
 
@@ -685,7 +689,7 @@ function getPositionSuccess(position){
 }
 
 function trackingPositionSuccess(position){
-	if(position.coords.accuracy < 10){
+	if(position.coords.accuracy < 20){
 
 		if(createLine != null && recordPosition){
 			createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
@@ -715,7 +719,8 @@ function goToPositionSuccess(position){
 
 function getPositionError(error) {
 	showAjaxLoad(false)
-	alert('code: '    + error.code    + '\n' +
+	alert('finding location failed:\n'
+		+'code: '    + error.code    + '\n' +
 		'message: ' + error.message + '\n');
 }
 
@@ -724,12 +729,14 @@ function startPositionWatch(createRoute){
 		createLine = makePolyLine('#DD0000', createRoute)
 		createLine.setMap(activeMap)
 	}
-	
-	geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
+	if(geoLocID == null){
+		geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
+	}
 }
 
 function endPositionWatch(){
 	navigator.geolocation.clearWatch(geoLocID);
+	geoLocID = null
 }
 
 function pausePositionWatch(pause){

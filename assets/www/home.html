@@ -23,21 +23,60 @@
 
 
 		<div data-role="header" data-theme="d">
-			<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+			<div data-type="horizontal" data-role="controlgroup" class="ui-btn-left">
+				<a href="home.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
+				<a href="home.html" data-role="button" data-icon="home" data-iconpos="notext">Back</a>
+			</div>
 			<h1>Home</h1>
 			<a href="settings.html" data-role="button" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Settings</a>
 		</div><!-- /header -->
 
-		<div data-role="content" class="ui-content">	
+		<div data-role="content" class="ui-content homeContent">	
+			<div class="homeLinksHolder">
+				<a href="create.html" class="homeLink">
+					<table><tr>
+					<td><img src="assets/images/home-create.png" /></td>
+					<td><h3>Create</h3>
+					Track your walk with GPS, or plan your route creating a path by hand</td>
+					</tr></table>
+				</a>
 
-			<p><a href="create.html">Create</a></p>
-			<p><a href="search.html">Search</a></p>
-			<p><a href="myRoutes.html?list=my">My Routes</a></p>
-			<p><a href="myRoutes.html?list=saved">Saved Routes</a></p>
-			<br />
-			<p><a href="notesPhotos.html">Notes &amp; Photos</a></p>
+				<a href="search.html" class="homeLink">
+					<table><tr>
+					<td><img src="assets/images/home-search.png" /></td>
+					<td><h3>Search</h3>
+					Search for routes all over the world, or find one that starts near you</td>
+					</tr></table>
+				</a>
 
+				<a href="myRoutes.html?list=saved" class="homeLink">
+					<table><tr>
+					<td><img src="assets/images/home-my.png" /></td>
+					<td><h3>Saved Routes</h3>
+					Routes you have created are saved here automatically</td>
+					</tr></table>
+				</a>
 
+				<a href="myRoutes.html?list=fav" class="homeLink">
+					<table><tr>
+					<td><img src="assets/images/home-favourite.png" /></td>
+					<td><h3>Favourite Routes</h3>
+					Mark a route as favourite to see it here.  Quick access to your most used paths</td>
+					</tr></table>
+				</a>
+
+				<br />
+				<a href="notesPhotos.html" class="homeLink backgroundShading">
+					<table><tr>
+					<td><img src="assets/images/home-notesphotos.png" /></td>
+					<td><h3>Notes &amp; Photos</h3>
+					Create notes and upload photos here.
+					Notes and photos are visible to everyone
+					unless set to private.</td>
+					</tr></table>
+				</a>
+
+			</div>
 
 		</div><!-- /content -->
 

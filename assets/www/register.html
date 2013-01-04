@@ -47,15 +47,17 @@
 		<div class="rambleon_logo_register">
 			<img src="assets/images/rambleon_logo_sm_cropped.png" width="100%" />
 		</div>
-		<form>
-			Username: <input type="text" name="regUser" id="regUser" data-mini="true">
-			Password: <input type="password" name="regPass" id="regPass" data-mini="true">
-			Confirm Password: <input type="password" name="confPass" id="confPass" data-mini="true">
-			Email: <input type="email" name="email" id="regEmail" data-mini="true">
-			Confirm Email: <input type="email" name="confEmail" id="confEmail" data-mini="true">
-		</form>
-		<p id="regMessage" class="errorMessage">&nbsp;</p>
-		<button onClick="sendRegFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
+		<div style="width:80%; margin:0 auto">
+			<form>
+				Username: <input type="text" name="regUser" id="regUser" data-mini="true">
+				Password: <input type="password" name="regPass" id="regPass" data-mini="true">
+				Confirm Password: <input type="password" name="confPass" id="confPass" data-mini="true">
+				Email: <input type="email" name="email" id="regEmail" data-mini="true">
+				Confirm Email: <input type="email" name="confEmail" id="confEmail" data-mini="true">
+			</form>
+			<p id="regMessage" class="errorMessage">&nbsp;</p>
+			<button onClick="sendRegFormData()" name="Send" data-theme="a" data-icon="plus">Create</button>
+		</div>
 
 
 	</div><!-- /content -->
