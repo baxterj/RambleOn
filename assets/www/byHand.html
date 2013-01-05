@@ -32,8 +32,13 @@
 	<script type="text/javascript">
 	function sendByHandRoute(){
 		$('#byHandError').html('&nbsp\;')
-		if(validateByHandRoute($('#byHandError'))){
-			sendNewRoute(createLine, $('#byHandName').val(), $('#byHandPrivate').val() == 'true', $('#byHandKeywords').val())
+
+		if(createLine == null || createLine.getPath().length < 2){
+			$('#byHandError').html('No route created')
+		}else{
+			if(validateByHandRoute($('#byHandError'))){
+				sendNewRoute(createLine, $('#byHandName').val(), $('#byHandPrivate').val() == 'true', $('#byHandKeywords').val())
+			}
 		}
 	}
 
@@ -61,7 +66,7 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-			<a href="#byHand-routeInfo" id="byHand-popupbtn" data-rel="popup">Save</a>
+			<a href="#byHand-routeInfo" id="byHand-popupbtn" data-rel="popup" data-position-to="window">Save</a>
 			<div data-role="popup" id="byHand-routeInfo" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<div style="padding:10px;">
@@ -81,6 +86,8 @@
 				</div>
 
 			</div><!--popup-->
+
+			<a href="#" onClick="resetCreation()">Reset</a>
 
 		</div><!-- /footer -->
 	</div><!-- /page -->

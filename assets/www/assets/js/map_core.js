@@ -48,7 +48,7 @@ var routeMarkers = new google.maps.MVCArray();
 var createLine
 var geoLocID
 
-
+var trackingPaused = true
 
 var noteImageRefreshEnabled = true
 var refreshTimer
@@ -77,7 +77,7 @@ $('#page-createByHand').live('pageshow', function(event){
 	sortMapHeight()
 	createMapByHand()
 	activeMap = maps.createMap
-	goToCurrentPosition()
+	
 	
 })
 
@@ -85,7 +85,6 @@ $('#page-createTracked').live('pageshow', function(event){
 	sortMapHeight()
 	createMapTracked()
 	activeMap = maps.trackedMap
-	goToCurrentPosition()
 	
 })
 
@@ -94,7 +93,7 @@ $('#page-notesphotos').live('pageshow', function(event){
 	createMapNotesPhotos()
 	activeMap = maps.noteMap
 	fillImgPopup()
-	goToCurrentPosition()
+	
 	
 })
 
@@ -289,7 +288,7 @@ function showImageContent(marker){
 	var html = '<div class="noteImageContent">\n'
 	html+= '<div class="ni_title">'+ cont.title + '</div><br />\n'
 	html+= '<a href="viewImage.html?id='+cont.id + '">'
-	html+= '<img src="'+ cont.thumbnail +'" /> </a> <br />\n'
+	html+= '<img src="'+ cont.thumbnail +'" /></a> <br />\n'
 	html+= '<p>' + cont.text + '</p>\n'
 	html+= '<div class="ni_info"><b>Owner: </b>' + cont.owner.username + '<br />\n'
 	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
@@ -359,7 +358,7 @@ function newRoutePoint(map, event){
 function createMapRoute(){
 	var mapOptions = {
 		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: mapZoom,
+		zoom: 14,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -397,12 +396,13 @@ function createMapByHand(){
 		maps.createMap.setZoom(oldZoom)
 	}
 
-	google.maps.event.addListener(maps.createMap, 'idle', function() {
-		updateNotesPhotos(maps.createMap, true)
-	})
+	// google.maps.event.addListener(maps.createMap, 'idle', function() {
+	// 	updateNotesPhotos(maps.createMap, true)
+	// })
 
 
 	if (createLine == null){
+		goToCurrentPosition()
 		createLine = makePolyLine('#DD0000', true)
 		//clearMarkerArray(createMarkers)
 	}
@@ -450,6 +450,10 @@ function createMapTracked(){
 	// createLine.setMap(maps.trackedMap)
 	//setNewMap(createMarkers, maps.trackedMap)
 
+	if(createLine != null){
+		createLine.setMap(maps.trackedMap)
+	}
+
 	trackCurrentPosition(maps.trackedMap)
 
 
@@ -490,7 +494,7 @@ function createMapSearch(){
 }
 
 function createMapNotesPhotos(){
-	enableNotesPhotos = false
+	
 	var mapOptions = {
 		center: new google.maps.LatLng(50.848115, -0.11364),
 		zoom: 5,
@@ -523,13 +527,18 @@ function createMapNotesPhotos(){
 	if(newItemMarker != null){
 		newItemMarker.setMap(maps.noteMap)
 	}else{
+		//first page visit for notes and photos
+		enableNotesPhotos = false
+
+		goToCurrentPosition()
 		newItemMarker = new google.maps.Marker({
 			position: maps.noteMap.getCenter(),
 			title: 'Created here',
 			map: maps.noteMap,
 			//icon: 'assets/images/routepoint-map-icon.png',
 			zIndex: 99999,
-			draggable: true
+			draggable: true,
+			optimized: false
 		});
 	}
 
@@ -689,16 +698,17 @@ function getPositionSuccess(position){
 }
 
 function trackingPositionSuccess(position){
-	if(position.coords.accuracy < 20){
-
+	//if(position.coords.accuracy < 20){
+		
 		if(createLine != null && recordPosition){
+			activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 			createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 			recordPosition = false
-			recordPositionTimer = setTimeout("recordPosition = true", 5000);
+			recordPositionTimer = setTimeout("recordPosition = true", 10000);
 		}
 
 		currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-	}
+	//}
 
 }
 
@@ -726,6 +736,7 @@ function getPositionError(error) {
 
 function startPositionWatch(createRoute){
 	if(createRoute){
+		activeMap.setZoom(15)
 		createLine = makePolyLine('#DD0000', createRoute)
 		createLine.setMap(activeMap)
 	}
@@ -745,5 +756,34 @@ function pausePositionWatch(pause){
 		recordPosition = false
 	}else{
 		recordPosition = true
+	}
+}
+
+$("#pauseTrack").live("slidestop", function(event, ui) {
+ 	if($(this).val() == 'track'){
+ 		if(trackingPaused){
+ 			if(createLine == null){
+ 				startPositionWatch(true)
+ 			}
+ 			trackingPaused = false
+ 			pausePositionWatch(false)
+ 		}
+ 	}else if($(this).val() == 'pause'){
+ 		if(!trackingPaused){
+ 			trackingPaused = true
+ 			pausePositionWatch(true)
+ 		}
+ 	}
+});
+
+function resetCreation(){
+	if(createLine != null){
+		createLine.getPath().clear()
+	}
+	
+	if($.mobile.activePage.attr('id') == 'page-createTracked'){
+		trackingPaused = true
+		pausePositionWatch(true)
+		$('#pauseTrack').val('pause').slider('refresh')	
 	}
 }

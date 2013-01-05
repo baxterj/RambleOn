@@ -41,8 +41,12 @@
 		}
 
 		function createNewImage(){
-			if(validateNewImage($('#imageError'))){
-				sendNewImage($('#imageTitle').val(), $('#imagePrivate').val()=='true', $('#imageText').val(), newItemMarker.getPosition().lat(), newItemMarker.getPosition().lng(), $('#imageFile').html())
+			if($('#imageFile').html().length < 2){
+				$('#imageError').html('You must select an image')
+			}else{
+				if(validateNewImage($('#imageError'))){
+					sendNewImage($('#imageTitle').val(), $('#imagePrivate').val()=='true', $('#imageText').val(), newItemMarker.getPosition().lat(), newItemMarker.getPosition().lng(), $('#imageFile').html())
+				}
 			}
 		}
 

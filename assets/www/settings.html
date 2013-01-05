@@ -34,10 +34,14 @@
 		</div><!-- /header -->
 
 		<div data-role="content" class="ui-content">
+			<div style="width:80%; margin:0 auto">
+				<div style="margin-bottom:30px" data-role="controlgroup">
+					<a href="#" onClick="logout()" data-theme="a" data-role="button">Logout</a>
+					<a href="#" onClick="navigator.app.exitApp()" data-theme="a" data-role="button" >Exit App</a>
+				</div>
 
-			<a href="#" onClick="logout()" data-role="button" data-icon="minus" data-theme="a">Logout</a>
-			<a href="#" onClick="navigator.app.exitApp()" data-role="button" data-icon="delete" data-theme="a">Exit App</a>
-
+				<a href="#" onClick="endPositionWatch()" data-role="button" data-theme="a">Kill GPS Tracker</a>
+			</div>
 
 		</div><!-- /content -->
 
