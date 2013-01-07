@@ -27,7 +27,8 @@ var currPosMarkerSettings = {
 		title: 'You are Here',
 		icon: 'assets/images/youarehere-map-icon.png',
 		zIndex: 99999,
-		optimized: false
+		optimized: false,
+		clickable:false
 	}
 var currentPositionMarker = new google.maps.Marker(currPosMarkerSettings);
 
@@ -395,6 +396,8 @@ function createMapRoute(){
 		updateNotesPhotos(maps.routeMap)
 	})
 
+	trackCurrentPosition(maps.routeMap)
+
 
 }
 
@@ -569,6 +572,8 @@ function createMapNotesPhotos(){
 			optimized: false
 		});
 	}
+
+	trackCurrentPosition(maps.noteMap)
 
 	
 }
@@ -769,9 +774,9 @@ function startPositionWatch(createRoute){
 		createLine = makePolyLine('#DD0000', createRoute)
 		createLine.setMap(activeMap)
 	}
-	if(geoLocID == null){
+	//if(geoLocID == null){
 		geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
-	}
+	//}
 }
 
 function endPositionWatch(){

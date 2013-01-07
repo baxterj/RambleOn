@@ -42,6 +42,10 @@
 
 		<div data-role="content" class="ui-content">
 			<div style="width:80%; margin:0 auto">
+				<h3>User: <span id="settingsUserName"></span></h3>
+				<script type="text/javascript">
+					document.getElementById('settingsUserName').innerHTML = window.localStorage.getItem("user")
+				</script>
 				<div style="margin-bottom:30px" data-role="controlgroup">
 					<a href="#" onClick="logout()" data-theme="a" data-role="button">Logout</a>
 					<a href="#" onClick="navigator.app.exitApp()" data-theme="a" data-role="button" >Exit App</a>
