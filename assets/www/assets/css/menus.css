@@ -204,3 +204,11 @@
 	background-color: #cadaca;
 	margin-top: 10px;
 }
+
+
+.styleLink{
+	font-weight: bold;
+	color:#27549d;
+	text-decoration: underline;
+	cursor: pointer;
+}

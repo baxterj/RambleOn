@@ -58,12 +58,14 @@ var routeRefreshTimer
 var recordPositionTimer
 var recordPosition = true
 
+var deleteMessageTarget
+
 $('#page-viewRoute').live('pageshow', function(event){
 	sortMapHeight()
 	createMapRoute()
 	activeMap = maps.routeMap
 	
-	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 500); //url vars dont load before this event fires so we wait
+	
 })
 
 $('#page-searchRoute').live('pageshow', function(event){
@@ -116,9 +118,9 @@ function findMapLocation(distance, units, location, messageTarget){
 
 
 function loadRoute(data, messageTarget){
-	if(maps.routeMap == null){//map not loaded yet, try again in 1 second
-		setTimeout("loadRoute(data, messageTarget)", 1000);
-	}else{
+	//if(maps.routeMap == null){//map not loaded yet, try again in 1 second
+	//	setTimeout("loadRoute(data, messageTarget)", 1000);
+	//}else{
 		maps.routeMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
 		maps.routeMap.route = makePolyLine('#DD0000', false)
 		maps.routeMap.route.setMap(maps.routeMap); //assign route poly to route map
@@ -127,9 +129,13 @@ function loadRoute(data, messageTarget){
 		$.mobile.activePage.find('#routeInfo p').html(routeInfoHTML(data))
 		createFavDoneButtons(data.id, data.fav, data.done)
 
+		if(userOwns(data.owner.username)){
+			createDeleteButton('route', data.id, null, null)
+		}else{
+			$.mobile.activePage.find('.deleteButton').attr('onClick', 'alert(\'You do not own this Route\')')
+		}
 
-
-	}
+	//}
 }
 
 function updateNotesPhotos(map, limitByZoom){
@@ -205,7 +211,9 @@ function showRouteContent(marker){
 	createFavDoneButtons(data.id, data.fav, data.done)
 	$.mobile.activePage.find('.search_routelink a').attr('href', 'route.html?id='+data.id)
 
-	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })//TODO
+	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })
+
+
 }
 
 function drawNotes(data, messageTarget){
@@ -239,20 +247,32 @@ function showNoteContent(marker){
 	var html = '<div class="noteImageContent">\n'
 	html+= '<div class="ni_title">' + cont.title + '</div>\n'
 	html+= '<p>' + cont.content + '</p>\n'
-	html+= '<div class="ni_info"><b>Owner: </b>' + cont.owner.username + '<br />\n'
+	html+= '<div class="ni_info"><b>Owner: </b><span class="' + isUserClass(cont.owner.username) + '">' + cont.owner.username + '</span><br />\n'
 	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
 	html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
 	html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
+	
+	if(userOwns(cont.owner.username)){
+		html+= '<a class="deleteButton styleLink">Delete Note</a>'
+	}
 	html+= '</div>\n'
+	
 	html+= '</div>'
 
-
 	infowindow.setContent(html)
+
+	
+
 	if(activeMarker != null){
 		activeMarker.setMap(null)
 	}
 	activeMarker = cloneMarker(marker)
+	activeMarker.setZIndex(0)
 	infowindow.open(activeMap, activeMarker)
+
+	if(userOwns(cont.owner.username)){
+		createDeleteButton('note', cont.id, null, null)
+	}
 }
 
 
@@ -290,7 +310,7 @@ function showImageContent(marker){
 	html+= '<a href="viewImage.html?id='+cont.id + '">'
 	html+= '<img src="'+ cont.thumbnail +'" /></a> <br />\n'
 	html+= '<p>' + cont.text + '</p>\n'
-	html+= '<div class="ni_info"><b>Owner: </b>' + cont.owner.username + '<br />\n'
+	html+= '<div class="ni_info"><b>Owner: </b><span class="' + isUserClass(cont.owner.username) + '">' + cont.owner.username + '</span><br />\n'
 	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
 	html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
 	html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
@@ -300,7 +320,9 @@ function showImageContent(marker){
 	if(activeMarker != null){
 		activeMarker.setMap(null)
 	}
+
 	activeMarker = cloneMarker(marker)
+	activeMarker.setZIndex(0)
 	infowindow.open(activeMap, activeMarker)
 }
 
@@ -366,10 +388,13 @@ function createMapRoute(){
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),
 		mapOptions);
 
-	updateNotesPhotos(maps.routeMap)
+	
+	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 500); //url vars dont load before this event fires so we wait
+
 	google.maps.event.addListener(maps.routeMap, 'idle', function() {
 		updateNotesPhotos(maps.routeMap)
 	})
+
 
 }
 
@@ -472,6 +497,8 @@ function createMapSearch(){
 	if(maps.searchMap != null){
 		oldCenter = maps.searchMap.getCenter()
 		oldZoom = maps.searchMap.getZoom()
+	}else{
+		enableNotesPhotos = false
 	}
 
 	maps.searchMap = new google.maps.Map(document.getElementById("map_canvas_search"),
@@ -484,7 +511,7 @@ function createMapSearch(){
 
 	google.maps.event.addListener(maps.searchMap, 'idle', function() {
 		if(enableNotesPhotos){
-			updateNotesPhotos(maps.searchMap, true)
+			updateNotesPhotos(maps.searchMap)
 		}
 		updateSearchRoutes(maps.searchMap)
 	})
@@ -511,6 +538,7 @@ function createMapNotesPhotos(){
 
 	maps.noteMap = new google.maps.Map(document.getElementById("map_canvas_notesphotos"),
 		mapOptions);
+	console.log('map created')
 
 	if(oldCenter != null){
 		maps.noteMap.setCenter(oldCenter)
@@ -544,6 +572,8 @@ function createMapNotesPhotos(){
 
 	
 }
+
+
 
 function createFavDoneButtons(routeID, fav, done){
 	$.mobile.activePage.find('.route_favbuttons .favBtn img').attr('src', 'assets/images/fav_'+fav+'_mini.png')
@@ -698,17 +728,16 @@ function getPositionSuccess(position){
 }
 
 function trackingPositionSuccess(position){
-	//if(position.coords.accuracy < 20){
-		
 		if(createLine != null && recordPosition){
-			activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-			createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-			recordPosition = false
-			recordPositionTimer = setTimeout("recordPosition = true", 10000);
+			if(position.coords.accuracy < 20){//only record if estimated gps accuracy is within 20 meters
+				activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+				createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+				recordPosition = false
+				recordPositionTimer = setTimeout("recordPosition = true", 10000);
+			}
 		}
 
 		currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-	//}
 
 }
 

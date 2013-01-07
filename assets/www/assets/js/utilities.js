@@ -109,11 +109,14 @@ function pageHeader(newText){
 function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 	var out = ''
 	out += '<b>Name: </b>' + data.name + '<br />\n'
-	out += '<b>Owner: </b>' + data.owner.username + '<br />\n'
+	out += '<b>Owner: </b>' + '<span class="' + isUserClass(data.owner.username) + '">' + data.owner.username + '</span><br />\n'
 	out += '<b>Private: </b>' + yesTrue(data.private) + '<br />\n'
 	out += '<b>Created: </b>' + data.creation_date + '<br />\n'
 	out += '<b>Last Update: </b>' + data.update_date + '<br />\n'
 	out += '<b>Keywords: </b>' + data.keywords + '<br />\n'
+
+
+
 	return out
 }
 
@@ -201,5 +204,21 @@ function fillImgPopup(){
 	$('#imagePrivate').val(window.localStorage.getItem("imagePrivate")+"").slider('refresh')
 }
 
+function createDeleteButton(api, id, messageTarget, imageString){
+	deleteMessageTarget = messageTarget
+	var clickJS = 'deleteItem(\''+api + '\', '+ id+', \''+imageString+'\')'
+	$.mobile.activePage.find('.deleteButton').attr('onClick', clickJS)
+}
 
 
+function isUserClass(user){
+	if (window.localStorage.getItem('user') == user){
+		return ' selfUser'
+	}else{
+		return ''
+	}
+}
+
+function userOwns(user){
+	return window.localStorage.getItem('user') == user
+}

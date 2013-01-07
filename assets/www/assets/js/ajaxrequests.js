@@ -1,4 +1,5 @@
-var apiUrl = 'http://www.rambleonline.com/api/v1/'
+//var apiUrl = 'http://www.rambleonline.com/api/v1/'
+var apiUrl = 'http://rocky-scrubland-5487.herokuapp.com/api/v1/'
 var routesListType = 'my' //my, fav, done, saved
 var routesListData
 var routesListMsgTarget
@@ -142,13 +143,7 @@ function createRouteListItem(route){
 	return html
 }
 
-function isUserClass(user){
-	if (window.localStorage.getItem('user') == user){
-		return ' selfUser'
-	}else{
-		return ''
-	}
-}
+
 
 function showMapThumbnail(id){
 	var thumb = $.mobile.activePage.find('#mapThumb'+id)
@@ -181,9 +176,14 @@ function changeDone(id, bool){
 }
 
 function getNotesPhotos(map){
-	var data = 'bounds='+ map.getBounds().toUrlValue()
-	sendAjax(data, null, drawNotes, 'note', 'GET', true)
-	sendAjax(data, null, drawImages, 'image', 'GET', true)
+	try{
+		var data = 'bounds='+ map.getBounds().toUrlValue()
+		sendAjax(data, null, drawNotes, 'note', 'GET', true)
+		sendAjax(data, null, drawImages, 'image', 'GET', true)
+	}catch(e){
+		//nothing
+	}
+	
 }
 
 function getSearchRoutes(map){
@@ -242,7 +242,6 @@ function sendNewImage(title, priv, text, lat, lng, file){
 		'lat': lat,
 		'lng': lng
 	}
-	//sendAjax(data, null, successNewImage, 'image', 'POST', true)
 	sendImgur(data, file, $('#imageStatus'))
 }
 
@@ -272,11 +271,60 @@ function displayImage(data, messageTarget){
 	$('#viewImageText').html(data.text)
 	$('#imageFullLink').attr('href', 'http://imgur.com/'+data.image.split('|')[0]+'')
 
-	var html = '<b>Owner: </b>' + data.owner.username + '<br />\n'
+	var html = '<b>Owner: </b><span class="' + isUserClass(data.owner.username) + '">' + data.owner.username + '</span><br />\n'
 	html+= '<b>Private: </b>' + yesTrue(data.private) + '<br />\n'
 	html+= '<b>Created: </b>' + data.creationDate + '<br />\n'
 	html+= '<b>Updated: </b>' + data.updateDate + '<br />\n'
 	$('#viewImageInfo').html(html)
+
+	if(userOwns(data.owner.username)){
+		createDeleteButton('image', data.id, $('#imageMessage'), data.image)	
+	}else{
+		$.mobile.activePage.find('.deleteButton').attr('onClick', 'alert(\'You do not own this image\')')
+	}
+	
+}
+
+function deleteItem(api, id, imageString){
+	if(confirm('Delete ' + api + '?')){
+		var successFunc
+		var data=JSON.stringify({
+			'id': id,
+		})
+		if(api == 'image'){
+			successFunc = successDelImgur
+			deleteImgur(data, imageString, successFunc, deleteMessageTarget)
+		}else if(api == 'note'){
+			successFunc = successDelNote
+		}else if(api == 'route'){
+			successFunc = successDelRoute
+		}
+
+		sendAjax(data, deleteMessageTarget, successFunc, 'delete'+api, 'POST', true)
+	}
+	
+}
+
+function successDelRoute(data, messageTarget){
+	alert('Route Deleted Succesfully')
+	history.back()
+}
+
+function successDelNote(data, messageTarget){
+	alert('Note Deleted Succesfully')
+	infowindow.close()
+	activeMarker.setMap(null)
+	activeMap.setZoom(activeMap.getZoom())
+}
+
+function successDelImgur(rambledata, data, messageTarget){
+	sendAjax(rambledata, messageTarget, successDelImage, 'deleteimage', 'POST', true)
+}
+
+function successDelImage(data, messageTarget){
+	messageTarget.html('Image Deleted Succesfully')
+	alert('Image Deleted Succesfully')
+	$.mobile.changePage('notesPhotos.html')
 }
 
 //Generic function for sending ajax requests, pass error message display target
@@ -344,7 +392,47 @@ function sendImgur(rambledata, img, messageTarget){
 		error: function(jqXHR, textStatus, errorThrown) {
 			showAjaxLoad(false)
 			if(messageTarget != null){
-				messageTarget.html(jQuery.parseJSON(jqXHR.responseText).data.error)
+				try{
+					messageTarget.html(jQuery.parseJSON(jqXHR.responseText).data.error)
+				}catch(e){
+					messageTarget.html('Something went wrong')
+				}
+			}
+		}
+	})
+}
+
+function deleteImgur(rambledata, imageString, successFunc, messageTarget){
+	showAjaxLoad(true)
+	var imgData = imageString.split('|')
+	var url = 'https://api.imgur.com/3/image/'+imgData[1]+'?_fake_status=200'
+
+	$.ajax({
+		url: url,
+		type: 'DELETE',
+		contentType: 'application/json',
+		//data: data,
+		dataType: 'json',
+		crossDomain: true,
+		processData: false,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader ("Authorization", "Client-ID 9cd62be48e7184a");
+		},
+		success: function(data, status, jqXHR) {
+			showAjaxLoad(false)
+			if(successFunc!= null){
+				successFunc(rambledata, data, messageTarget)
+			}
+			
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			showAjaxLoad(false)
+			if(messageTarget != null){
+				try{
+					messageTarget.html(jQuery.parseJSON(jqXHR.responseText).data.error)
+				}catch(e){
+					messageTarget.html('Something went wrong')
+				}
 			}
 		}
 	})
