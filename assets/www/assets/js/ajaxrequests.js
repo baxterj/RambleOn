@@ -12,17 +12,13 @@ $('#page-routesList').live('pageshow', function(event, data){
 		getMyRoutesItems($('#routesListMessage'), routesListType)
 	}
 
-	endPositionWatch()
-
 })
 
 $('#page-viewImage').live('pageshow', function(event){
 	setTimeout("getImage(getUrlVars()['id'])", 500); //url vars dont load before this event fires so we wait
 })
 
-$('#page-home').live('pageshow', function(event, data){
-	endPositionWatch()
-})
+
 
 
 function sendLogin(data, messageTarget){

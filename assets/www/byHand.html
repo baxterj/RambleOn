@@ -66,7 +66,7 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-			<a href="#byHand-routeInfo" id="byHand-popupbtn" data-rel="popup" data-position-to="window">Save</a>
+			<a href="#byHand-routeInfo" id="byHand-popupbtn" data-rel="popup" data-position-to="window">Upload</a>
 			<div data-role="popup" id="byHand-routeInfo" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<div style="padding:10px;">
@@ -86,7 +86,9 @@
 				</div>
 
 			</div><!--popup-->
-
+			
+			<a href="#" onClick="saveCreateLine(); alert('Saved')">Save</a>
+			<a href="#" onClick="undoLastPoint()">Undo</a>
 			<a href="#" onClick="resetCreation()">Reset</a>
 
 		</div><!-- /footer -->

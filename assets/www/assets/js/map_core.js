@@ -97,7 +97,11 @@ $('#page-notesphotos').live('pageshow', function(event){
 	activeMap = maps.noteMap
 	fillImgPopup()
 	
-	
+})
+
+//kill gps when not on a relevant page, to save battery
+$('#page-home, #page-create, #page-routesList').live('pageshow', function(event, data){
+	endPositionWatch()
 })
 
 
@@ -342,39 +346,10 @@ function setNewMap(arr, map){
 
 function newRoutePoint(map, event){
 	createLine.getPath().push(event.latLng);
+}
 
-	//this code used when editable: false on polyline
-	// var path = createLine.getPath();
-	// num = path.getLength();
-	// path.push(event.latLng);
-
-	// var marker = new google.maps.Marker({
-	// 	position: event.latLng,
-	// 	title: ''+num,
-	// 	map: map,
-	// 	num: num,
-	// 	icon: 'assets/images/routepoint-map-icon.png',
-	// 	zIndex: 99999,
-	// 	draggable: true
-	// });
-	// createMarkers.push(marker);
-
-	// google.maps.event.addListener(marker, 'dragend', function(){
-	// 	path.setAt(this.num, this.getPosition());
-	// });
-
-	// google.maps.event.addListener(marker, 'click', function(){
-	// 	if (confirm('Remove Point?')) {
-	// 		path.removeAt(this.num)
-	// 		this.setMap(null)
-	// 		createMarkers.removeAt(this.num)
-	// 		for(var i = 0; i < createMarkers.getLength(); i++){
-	// 			createMarkers.getAt(i).num = i;
-	// 		}
-	// 	} else {
-	// 		//nothing
-	// 	}
-	// });
+function undoLastPoint(){
+	createLine.getPath().pop()
 }
 
 
@@ -429,24 +404,27 @@ function createMapByHand(){
 	// })
 
 
-	if (createLine == null){
+
+	if(createLine != null){
+		createLine.setMap(maps.createMap)
+	}else{
 		goToCurrentPosition()
 		createLine = makePolyLine('#DD0000', true)
-		//clearMarkerArray(createMarkers)
+		createLine.setMap(maps.createMap)
+		loadCreateLine(maps.createMap)//loads from window.localstorage
 	}
-	createLine.setMap(maps.createMap)
-	//setNewMap(createMarkers, maps.createMap)
 
 	google.maps.event.addListener(maps.createMap, 'click', function(event) {
 		newRoutePoint(this, event)
 	})
 
+	trackCurrentPosition(maps.createMap)
 }
 
 function createMapTracked(){
 	var mapOptions = {
 		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: 5,
+		zoom: 11,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -471,16 +449,15 @@ function createMapTracked(){
 		updateNotesPhotos(maps.trackedMap, true)
 	})
 
-	// if (createLine == null){
-	// 	createLine = makePolyLine('#DD0000', false)
-	// 	//clearMarkerArray(createMarkers)
-	// }
-	// createLine.setMap(maps.trackedMap)
-	//setNewMap(createMarkers, maps.trackedMap)
+
 
 	if(createLine != null){
 		createLine.setMap(maps.trackedMap)
+	}else{
+		loadCreateLine(maps.trackedMap)//loads from window.localstorage
 	}
+
+	
 
 	trackCurrentPosition(maps.trackedMap)
 
@@ -738,12 +715,45 @@ function trackingPositionSuccess(position){
 				activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 				createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 				recordPosition = false
+
+				//save the tracked route in case of crash
+				saveCreateLine()
+
+				//wait 10 seconds until do this again
 				recordPositionTimer = setTimeout("recordPosition = true", 10000);
 			}
 		}
 
 		currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 
+}
+
+
+function loadCreateLine(map){
+	if(window.localStorage.getItem('trackingPathString') != null){
+		if(createLine == null){
+			createLine = makePolyLine('#DD0000', true)
+		}
+		createLine.setMap(map)
+		
+		path = JSON.parse(window.localStorage.getItem('trackingPathString')).points
+		for(var i = 0; i < path.length; i++){
+			createLine.getPath().push(new google.maps.LatLng(path[i].lat, path[i].lng))
+		}
+	}
+}
+
+
+function saveCreateLine(){
+	var coords = []
+	for(var i = 0; i < createLine.getPath().getLength(); i++){
+		coords.push({
+			lat: createLine.getPath().getAt(i).lat(),
+			lng: createLine.getPath().getAt(i).lng()
+		})
+	}
+	var pathJSON = {points: coords}
+	window.localStorage.setItem('trackingPathString', JSON.stringify(pathJSON))
 }
 
 function goToCurrentPosition(){
@@ -771,15 +781,19 @@ function getPositionError(error) {
 function startPositionWatch(createRoute){
 	if(createRoute){
 		activeMap.setZoom(15)
-		createLine = makePolyLine('#DD0000', createRoute)
+		if(createLine == null){
+			createLine = makePolyLine('#DD0000', createRoute)
+		}
 		createLine.setMap(activeMap)
 	}
-	//if(geoLocID == null){
-		geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
-	//}
+
+	navigator.geolocation.clearWatch(geoLocID);
+	geoLocID = null
+	geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
 }
 
 function endPositionWatch(){
+	clearTimeout(recordPositionTimer)
 	navigator.geolocation.clearWatch(geoLocID);
 	geoLocID = null
 }
@@ -811,13 +825,18 @@ $("#pauseTrack").live("slidestop", function(event, ui) {
 });
 
 function resetCreation(){
-	if(createLine != null){
-		createLine.getPath().clear()
-	}
-	
-	if($.mobile.activePage.attr('id') == 'page-createTracked'){
-		trackingPaused = true
-		pausePositionWatch(true)
-		$('#pauseTrack').val('pause').slider('refresh')	
+	if(confirm('Reset route creation?')){
+
+		if(createLine != null){
+			createLine.getPath().clear()
+		}
+
+		window.localStorage.removeItem('trackingPathString')
+		
+		if($.mobile.activePage.attr('id') == 'page-createTracked'){
+			trackingPaused = true
+			pausePositionWatch(true)
+			$('#pauseTrack').val('pause').slider('refresh')	
+		}
 	}
 }

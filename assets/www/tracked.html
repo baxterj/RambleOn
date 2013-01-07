@@ -83,16 +83,16 @@
 						<label for="trackedKeywords" data-mini="true" >Keywords:</label>
 						<input name="trackedKeywords" id="trackedKeywords" data-mini="true" placeholder="e.g. trees fields" />
 					</form><br />
-					<button onClick="endPositionWatch(); sendTrackedRoute();" data-mini="true">Stop Tracking <br /> &amp; Submit</button>
+					<button onClick="endPositionWatch(); sendTrackedRoute();" data-mini="true">Stop Tracking<br />&amp; Submit</button>
 					<div class="errorMessage" id="trackedError">&nbsp;</div>
 				</div>
 
 			</div><!--popup-->
 
-			<!--a href="#" onClick="resetCreation()" data-mini="true">Reset</a-->
-			<a href="#" onClick="endPositionWatch()" data-mini="true">(temp)Stop GPS</a>
-			<div style="float:right; width:110px">
-				<select name="pauseTrack" id="pauseTrack" data-role="slider" data-mini="true">
+			<a href="#" onClick="resetCreation()" data-mini="true">Reset</a>
+
+			<div style="float:right; width:180px">
+				<div style="float:left; margin-right:5px; margin-top:7px; font-size:11pt;">Tracking:</div> <select name="pauseTrack" id="pauseTrack" data-role="slider" data-mini="true">
 					<option value="pause">Pause</option>
 					<option value="track">Track</option>
 				</select>

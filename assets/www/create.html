@@ -27,7 +27,7 @@
 <body>
 	
 
-	<div data-role="page">
+	<div data-role="page" id="page-create">
 
 
 		<div data-role="header" data-theme="d" class="map_header">
@@ -59,7 +59,7 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-			<a href="#create-Info" id="create-popupbtn" data-rel="popup">Which do I choose?</a>
+			<a href="#create-Info" id="create-popupbtn" data-rel="popup">Which one?</a>
 			<div data-role="popup" id="create-Info" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<div style="padding:10px;">
@@ -67,6 +67,20 @@
 						Select GPS if you are outdoors, in a vehicle, or otherwise have good visibility of the sky.  You phone's GPS will make the route for you</p>
 					<p><b>Create by Hand</b><br />
 						Create a route by hand if you are indoors or not actually taking the route now.</p>
+				</div>
+
+			</div><!--popup-->
+
+			<a href="#create-Tips" id="create-tipsPopup" data-rel="popup">Tips</a>
+			<div data-role="popup" id="create-Tips" class="popup">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<div style="padding:10px;">
+					<p><b><span style="color:#DD0000">Watch your GPS</span></b><br />
+						Leaving the Track page will pause your route, be sure to reactivate using the slider when you wish to continue. (You may use other apps, just be sure to minimise from the Track screen)</p>
+					<p><b>Save for Later</b><br />
+						You can save a hand built route to finish later. Tracked routes are saved automatically.</p>
+					<p><b>Why not both?</b><br />
+						A route created by hand can be finished off using the tracker, and vice versa.</p>
 				</div>
 
 			</div><!--popup-->

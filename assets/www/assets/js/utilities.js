@@ -1,3 +1,5 @@
+
+
 function stripPX(inp){
 	return inp.split('px', [0])
 }
@@ -5,6 +7,11 @@ function stripPX(inp){
 $(document).on('pageinit','[data-role=page]', function(){
 	$('[data-position=fixed]').fixedtoolbar({ tapToggle:false});
 });
+
+
+
+
+
 
 function validateField(field, fieldName, messageTarget, rule, required, min, max){
 	var text = field.val()
@@ -129,6 +136,7 @@ function showAjaxLoad(bool){
 }
 
 function capturePhoto() {
+	//Store contents of popup's fields, as the page refreshes when return from img selection
 	setImageLocalStorage()
 	navigator.camera.getPicture(capturePhotoSuccess, capturePhotoFail,
 		{
@@ -153,6 +161,7 @@ function capturePhotoFail(failMessage){
 
 
 function findPhoto() {
+	//Store contents of popup's fields, as the page refreshes when return from img selection
 	setImageLocalStorage()
       // Retrieve image file location from specified source
 	navigator.camera.getPicture(findPhotoSuccess, findPhotoFail,
