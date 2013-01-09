@@ -272,7 +272,7 @@ function displayImage(data, messageTarget){
 
 	$('#viewImageTitle').html('<b>'+data.title+'</b>')
 	$('#viewImageText').html(data.text)
-	$('#imageFullLink').attr('href', 'http://imgur.com/'+data.image.split('|')[0]+'')
+	$('#imageFullLink').attr('href', 'http://i.imgur.com/'+data.image.split('|')[0]+'')
 
 	var html = '<b>Owner: </b><span class="' + isUserClass(data.owner.username) + '">' + data.owner.username + '</span><br />\n'
 	html+= '<b>Private: </b>' + yesTrue(data.private) + '<br />\n'

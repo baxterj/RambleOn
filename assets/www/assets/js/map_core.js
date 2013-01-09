@@ -364,22 +364,26 @@ function createMapRoute(){
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),
 		mapOptions);
 
+	enableNotesPhotos = true
 	
 	setTimeout("getRoute(getUrlVars()['id'], loadRoute)", 500); //url vars dont load before this event fires so we wait
 
 	google.maps.event.addListener(maps.routeMap, 'idle', function() {
-		updateNotesPhotos(maps.routeMap)
+		if(enableNotesPhotos){
+			updateNotesPhotos(maps.routeMap)
+		}
 	})
 
 	trackCurrentPosition(maps.routeMap)
+	goToCurrentPosition()
 
 
 }
 
 function createMapByHand(){
 	var mapOptions = {
-		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: 5,
+		center: new google.maps.LatLng(52.803280, -1.871453),
+		zoom: 6,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -399,32 +403,40 @@ function createMapByHand(){
 		maps.createMap.setZoom(oldZoom)
 	}
 
+	enableNotesPhotos = true
+
 	// google.maps.event.addListener(maps.createMap, 'idle', function() {
 	// 	updateNotesPhotos(maps.createMap, true)
 	// })
 
+	google.maps.event.addListener(maps.createMap, 'click', function(event) {
+		newRoutePoint(this, event)
+	})
 
+	google.maps.event.addListener(maps.createMap, 'idle', function() {
+		if(enableNotesPhotos){
+			updateNotesPhotos(maps.createMap)
+		}
+	})
 
 	if(createLine != null){
 		createLine.setMap(maps.createMap)
+		maps.createMap.panTo(createLine.getPath().getAt(0))
+		maps.createMap.setZoom(13)
 	}else{
-		goToCurrentPosition()
+		
 		createLine = makePolyLine('#DD0000', true)
 		createLine.setMap(maps.createMap)
 		loadCreateLine(maps.createMap)//loads from window.localstorage
 	}
-
-	google.maps.event.addListener(maps.createMap, 'click', function(event) {
-		newRoutePoint(this, event)
-	})
 
 	trackCurrentPosition(maps.createMap)
 }
 
 function createMapTracked(){
 	var mapOptions = {
-		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: 11,
+		center: new google.maps.LatLng(52.803280, -1.871453),
+		zoom: 6,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -445,8 +457,12 @@ function createMapTracked(){
 		maps.trackedMap.setZoom(oldZoom)
 	}
 
+	enableNotesPhotos = true
+
 	google.maps.event.addListener(maps.trackedMap, 'idle', function() {
-		updateNotesPhotos(maps.trackedMap, true)
+		if(enableNotesPhotos){
+			updateNotesPhotos(maps.trackedMap)
+		}
 	})
 
 
@@ -466,8 +482,8 @@ function createMapTracked(){
 
 function createMapSearch(){
 	var mapOptions = {
-		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: 7,
+		center: new google.maps.LatLng(52.803280, -1.871453),
+		zoom: 6,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -487,6 +503,8 @@ function createMapSearch(){
 	if(oldCenter != null){
 		maps.searchMap.setCenter(oldCenter)
 		maps.searchMap.setZoom(oldZoom)
+	}else{
+		goToCurrentPosition()
 	}
 
 	google.maps.event.addListener(maps.searchMap, 'idle', function() {
@@ -503,8 +521,8 @@ function createMapSearch(){
 function createMapNotesPhotos(){
 	
 	var mapOptions = {
-		center: new google.maps.LatLng(50.848115, -0.11364),
-		zoom: 5,
+		center: new google.maps.LatLng(52.803280, -1.871453),
+		zoom: 6,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
 		zoomControl: true
 	};
@@ -536,7 +554,7 @@ function createMapNotesPhotos(){
 		newItemMarker.setMap(maps.noteMap)
 	}else{
 		//first page visit for notes and photos
-		enableNotesPhotos = false
+		enableNotesPhotos = true
 
 		goToCurrentPosition()
 		newItemMarker = new google.maps.Marker({
@@ -764,7 +782,7 @@ function goToCurrentPosition(){
 function goToPositionSuccess(position){
 	showAjaxLoad(false)
 	activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-	activeMap.setZoom(12)
+	activeMap.setZoom(13)
 
 	if($.mobile.activePage.attr('id') == 'page-notesphotos'){
 		centerMarker(newItemMarker)
