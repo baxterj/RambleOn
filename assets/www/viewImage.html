@@ -58,8 +58,16 @@
 		
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-			<a href="#" rel="external" id="imageFullLink" data-icon="info">View Full Size</a>
-			<a href="#" class="deleteButton" data-icon="delete">Delete</a>
+
+			<a href="#viewImage-menu" id="viewImage-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="viewImage-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="delete" data-theme="d"><a href="#" class="deleteButton">Delete</a></li>
+					<li data-icon="info" data-theme="d"><a href="#" rel="external" id="imageFullLink">View Full Size</a></li>
+				</ul>
+			</div>
+
 		</div><!-- /footer -->
 
 	</div><!-- /page -->

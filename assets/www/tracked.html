@@ -68,6 +68,16 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
+			<a href="#tracked-menu" id="tracked-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="tracked-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="refresh" data-theme="d"><a href="#" onClick="resetCreation()" data-mini="true">Reset</a></li>
+					<li data-theme="d" data-icon="grid"><a href="#" onClick="setEnableNotesPhotos()" data-mini="true">Notes &amp; Photos</a></li>
+				</ul>
+			</div>
+
+
 			<a href="#tracked-routeInfo" id="tracked-popupbtn" data-rel="popup" data-position-to="window" data-mini="true">Upload</a>
 			<div data-role="popup" id="tracked-routeInfo" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
@@ -89,7 +99,8 @@
 
 			</div><!--popup-->
 
-			<a href="#" onClick="resetCreation()" data-mini="true">Reset</a>
+			
+		
 
 			<div style="float:right; width:180px">
 				<div style="float:left; margin-right:5px; margin-top:7px; font-size:11pt;">Tracking:</div> <select name="pauseTrack" id="pauseTrack" data-role="slider" data-mini="true">

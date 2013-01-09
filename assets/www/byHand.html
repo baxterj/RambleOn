@@ -66,6 +66,19 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
+			<a href="#byHand-menu" id="byHand-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="byHand-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="home" data-theme="d"><a href="#" onClick="currentPosition()">My Location</a></li>
+					<li data-theme="d" data-icon="grid"><a href="#" onClick="setEnableNotesPhotos()">Notes &amp; Photos</a></li>
+					<li data-icon="refresh" data-theme="d"><a href="#" onClick="resetCreation()">Reset</a></li>
+					<li data-icon="back" data-theme="d"><a href="#" onClick="undoLastPoint()">Undo</a></li>
+					<li data-icon="plus" data-theme="d"><a href="#" onClick="saveCreateLine(); alert('Saved')">Save</a></li>
+				</ul>
+			</div>
+
+
 			<a href="#byHand-routeInfo" id="byHand-popupbtn" data-rel="popup" data-position-to="window">Upload</a>
 			<div data-role="popup" id="byHand-routeInfo" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
@@ -87,9 +100,7 @@
 
 			</div><!--popup-->
 			
-			<a href="#" onClick="saveCreateLine(); alert('Saved')">Save</a>
-			<a href="#" onClick="undoLastPoint()">Undo</a>
-			<a href="#" onClick="resetCreation()">Reset</a>
+			
 
 		</div><!-- /footer -->
 	</div><!-- /page -->

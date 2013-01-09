@@ -46,8 +46,20 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" >
 
-			<a href="#routeInfo" data-rel="popup" >Route Info</a>
+			
+			<a href="#byHand-menu" id="byHand-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="byHand-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="exit" data-theme="d"><a href="#" class="deleteButton">Delete Route</a></li>
+					<li data-icon="home" data-theme="d"><a href="#" onClick="currentPosition()">My Location</a></li>
+					<li data-theme="d" data-icon="grid"><a href="#" onClick="setEnableNotesPhotos()">Notes &amp; Photos</a></li>
+					
+				</ul>
+			</div>
 
+
+			<a href="#routeInfo" data-rel="popup" data-icon="info">Route Info</a>
 			<div data-role="popup" id="routeInfo" class="popup">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<p>&nbsp;</p>
@@ -58,7 +70,7 @@
 				<a href="#" class="doneBtn"><img src="assets/images/done_false_mini.png" /></a>
 			</div>
 			
-			<a href="#" class="deleteButton" data-icon="delete">Delete</a>
+			
 
 		</div><!-- /footer -->
 

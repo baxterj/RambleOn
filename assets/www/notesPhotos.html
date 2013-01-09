@@ -138,9 +138,16 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-			<a href="#" onClick="centerMarker(newItemMarker)">Center Marker</a>
-			<!--a href="#" onClick="currentPosition()">My Location</a-->
-			<a href="#" onClick="setEnableNotesPhotos()">Toggle Existing</a>
+
+			<a href="#notesphotos-menu" id="notesphotos-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="notesphotos-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="home" data-theme="d"><a href="#" onClick="currentPosition()">My Location</a></li>
+					<li data-icon="arrow-d" data-theme="d"><a href="#" onClick="centerMarker(newItemMarker)">Center Marker</a></li>
+					<li data-theme="d" data-icon="grid"><a href="#" onClick="setEnableNotesPhotos()">Toggle Existing</a></li>
+				</ul>
+			</div>
 
 			</div><!--popup-->
 

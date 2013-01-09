@@ -67,7 +67,15 @@
 		
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
-			<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
+			
+			<a href="#myRoutes-menu" id="myRoutes-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<div data-role="popup" class="popupMenu" id="myRoutes-menu">
+				<ul data-role="listview" data-inset="true" data-mini="true">
+					<li data-role="divider">Menu</li>
+					<li data-icon="delete" data-theme="d"><a href="#" onClick="navigator.app.exitApp()">Exit App</a></li>
+				</ul>
+			</div>
+			
 		</div><!-- /footer -->
 	</div><!-- /page -->
 

@@ -212,3 +212,7 @@
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+.popupMenu{
+	min-width: 150px;
+}
