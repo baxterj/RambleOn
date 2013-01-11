@@ -29,16 +29,45 @@
 <body>
 	<div data-role="page">
 
+		<script type="text/javascript">
+
+			function sendFormForgot(){
+				$('#forgotError, #forgotSuccess').html('&nbsp\;')
+
+				if(validateForgotForm($('#forgotError'))){
+					sendForgot($('#forgotUser').val(), $('#forgotError'))
+				}
+			}
+
+			function validateForgotForm(messageTarget){
+				return validateField($('#forgotUser'), 'Username', messageTarget, 'alphanum', true, 4, 20)
+			}
+
+			
+		</script>
 
 
 		<div data-role="header" data-theme="d">
 			<a href="login.html" data-rel="back" data-role="button" data-icon="back" data-iconpos="notext">Back</a>
-			<h1>Forgot</h1>
+			<h1>Forgot Password</h1>
 		</div><!-- /header -->
 
 		<div data-role="content" class="ui-content">	
+			<div class="rambleon_logo_register">
+				<img src="assets/images/rambleon_logo_sm_cropped.png" width="100%" />
+			</div>
+			<div style="width:80%; margin:0 auto">
+				<p><b>Forgot your password?</b></p>
+				<p>Not to worry, simply enter your username here, and we will send a password reset link to the email address you supplied when you registered.</p>
 
-			Forgot your password?
+				<form>
+					Username: <input type="text" name="forgotUser" id="forgotUser">
+				</form>
+				<div class="successMessage" id="forgotSuccess">&nbsp;</div>
+				<div class="errorMessage" id="forgotError">&nbsp;</div>
+
+				<a href="#" onClick="sendFormForgot()" data-role="button" data-theme="a">Send Email</a>
+			</div>
 
 		</div><!-- /content -->
 

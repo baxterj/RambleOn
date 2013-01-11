@@ -121,23 +121,31 @@ $('#page-home, #page-create, #page-routesList').live('pageshow', function(event,
 	endPositionWatch()
 })
 
+// $('#page-viewRoute, #page-searchRoute, #page-createByHand, #page-createTracked, #page-notesphotos').live('orientationchange', function(event){
+	//nothing needed
+// })
+
 
 
 
 function findMapLocation(distance, units, location, messageTarget){
 	geocoder = new google.maps.Geocoder();
+	var oldLatLngBounds = activeMap.getBounds()
 	geocoder.geocode( { 
 		address: location,
 		region: 'gb',
-		}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK) {
-			activeMap.setCenter(results[0].geometry.location);
-			activeMap.setZoom(calcSearchZoom(distance, units))
-		}else{
-			messageTarget.html('Could not find address')
-		}
-
-	});
+		}, 
+		function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				activeMap.setCenter(results[0].geometry.location);
+				activeMap.setZoom(calcSearchZoom(distance, units))
+				if(oldLatLngBounds.equals(activeMap.getBounds())){
+					activeMap.panBy(0, 1)//refresh map
+				}
+			}else{
+				messageTarget.html('Could not find address')
+			}
+		});
 
 }
 

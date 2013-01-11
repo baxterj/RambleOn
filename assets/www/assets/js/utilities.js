@@ -69,10 +69,17 @@ function fieldsEqual(first, second, setName, messageTarget){
 	return true
 }
 
-function stringifyArray(argArray){
+function stringifyArray(argArray, delimeter){
 	var out = ''
+	var delim = ' '
+	if(delimeter != null){
+		delim = delimeter
+	}
 	for (var i = 0; i < argArray.length; i++){
-		out += argArray[i] + ' '
+		out += argArray[i]
+		if(i < argArray.length-1){
+			out += delim
+		}
 	}
 	return out
 }

@@ -20,6 +20,16 @@ $('#page-viewImage').live('pageshow', function(event){
 
 
 
+function sendForgot(username, messageTarget){
+	var data = JSON.stringify({
+		"user": username
+	})
+	sendAjax(data, messageTarget, successForgotPassword, 'forgotpassword', 'POST', false)
+}
+
+function successForgotPassword(data, messageTarget){
+	$('#forgotSuccess').html(data.message)
+}
 
 function sendLogin(data, messageTarget){
 	var data = JSON.stringify({
@@ -191,6 +201,12 @@ function getNotesPhotos(map){
 
 function getSearchRoutes(map){
 	var data = 'bounds='+ map.getBounds().toUrlValue()
+	if($('#searchKeywords').val() != ''){
+		if(validateField($('#searchKeywords'), 'Keywords', $('#searchFieldError'), 'alphanum', false, 0, 200)){
+			data += '&filterwords='+stringifyArray($('#searchKeywords').val().split(' '), ',')
+		}
+	}
+	
 	sendAjax(data, null, drawRoutes, 'route', 'GET', true)
 }
 
