@@ -233,6 +233,7 @@ function sendNewRoute(line, name, priv, keywords){
 }
 
 function successNewRoute(data, messageTarget){
+	resetCreation(true)
 	$.mobile.changePage('route.html?id='+data.id)
 }
 

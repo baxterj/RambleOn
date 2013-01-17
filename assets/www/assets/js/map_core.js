@@ -66,6 +66,8 @@ var routeRefreshTimer
 var recordPositionTimer
 var recordPosition = false
 
+var firstRoutePreview = true
+
 var deleteMessageTarget
 
 var oms
@@ -75,7 +77,7 @@ var omsOptions = {
 	markersWontHide: true,
 	keepSpiderfied: true,
 	nearbyDistance: 30,
-	circleSpiralSwitchover: 0
+	circleSpiralSwitchover: Infinity
 }
 
 $('#page-viewRoute').live('pageshow', function(event){
@@ -205,31 +207,34 @@ function updateSearchRoutes(map){
 }
 
 function drawRoutes(data, messageTarget){
-	clearMarkerArray(routeMarkers)
+	if(activeMap == maps.searchMap){
+		clearMarkerArray(routeMarkers)
 
-	routesContent = data.objects
+		routesContent = data.objects
 
-	var marker
-	for(var i = 0; i < data.objects.length; i++){
-		//make marker for each
-		marker = new google.maps.Marker({
-			position: new google.maps.LatLng(data.objects[i].pathpoints[0].lat, data.objects[i].pathpoints[0].lng),
-			map: activeMap,
-			icon: 'assets/images/route-map-icon.png',
-			title: data.objects[i].name,
-			num: i,
-			optimized: false,
-			clickable: true,
-			zIndex: 99999,
-			mtype: 'route'
-		});
-		routeMarkers.push(marker)
-		oms.addMarker(marker)
-		// google.maps.event.addListener(marker,"click",function(){
-		// 	showRouteContent(this)
-		// });
+		var marker
+		for(var i = 0; i < data.objects.length; i++){
+			//make marker for each
+			marker = new google.maps.Marker({
+				position: new google.maps.LatLng(data.objects[i].pathpoints[0].lat, data.objects[i].pathpoints[0].lng),
+				map: activeMap,
+				icon: 'assets/images/route-map-icon.png',
+				title: data.objects[i].name,
+				num: i,
+				optimized: false,
+				clickable: true,
+				zIndex: 99999,
+				mtype: 'route'
+			});
+			routeMarkers.push(marker)
+			oms.addMarker(marker)
+			// google.maps.event.addListener(marker,"click",function(){
+			// 	showRouteContent(this)
+			// });
 
+		}
 	}
+	
 }
 
 //used for search map
@@ -245,12 +250,16 @@ function showRouteContent(marker){
 	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
 	buildPathFromCoords(data, maps.searchMap.route)
 	setPathEndMarker(data, maps.searchMap)
-	maps.searchMap.setZoom(14)
+	maps.searchMap.setZoom(15)
 	$.mobile.activePage.find('#search-routeInfo p').html(routeInfoHTML(data))
 	createFavDoneButtons(data.id, data.fav, data.done)
 	$.mobile.activePage.find('.search_routelink a').attr('href', 'route.html?id='+data.id)
+	if(firstRoutePreview){
+		firstRoutePreview = false
+		$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })
+	}
+	
 
-	$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })
 
 
 }
@@ -290,9 +299,9 @@ function showNoteContent(marker){
 	html+= '<div class="ni_title">' + cont.title + '</div>\n'
 	html+= '<p>' + cont.content + '</p>\n'
 	html+= '<div class="ni_info"><b>Owner: </b><span class="' + isUserClass(cont.owner.username) + '">' + cont.owner.username + '</span><br />\n'
-	// html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
-	// html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
-	// html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
+	html+= '<b>Private: </b>' + yesTrue(cont.private) + '<br />\n'
+	html+= '<b>Created: </b>' + cont.creationDate + '<br />\n'
+	html+= '<b>Updated: </b>' + cont.updateDate + '<br />\n'
 	
 	if(userOwns(cont.owner.username)){
 		html+= '<a class="deleteButton styleLink">Delete Note</a>'
@@ -565,7 +574,7 @@ function createMapTracked(){
 	}
 
 	
-
+	goToCurrentPosition()
 	trackCurrentPosition(maps.trackedMap)
 
 
@@ -963,19 +972,27 @@ $("#pauseTrack").live("slidestop", function(event, ui) {
 	}
 });
 
-function resetCreation(){
-	if(confirm('Reset route creation?')){
-
-		if(createLine != null){
-			createLine.getPath().clear()
+function resetCreation(ignoreWarning){
+	if(ignoreWarning){
+		doCreationReset()
+	}else{
+		if(confirm('Reset route creation?')){
+			doCreationReset()			
 		}
+	}
+	
+}
 
-		window.localStorage.removeItem('trackingPathString')
-		
-		if($.mobile.activePage.attr('id') == 'page-createTracked'){
-			trackingPaused = true
-			pausePositionWatch(true)
-			$('#pauseTrack').val('pause').slider('refresh')	
-		}
+function doCreationReset(){
+	if(createLine != null){
+		createLine.getPath().clear()
+	}
+
+	window.localStorage.removeItem('trackingPathString')
+	
+	if($.mobile.activePage.attr('id') == 'page-createTracked'){
+		trackingPaused = true
+		pausePositionWatch(true)
+		$('#pauseTrack').val('pause').slider('refresh')	
 	}
 }
