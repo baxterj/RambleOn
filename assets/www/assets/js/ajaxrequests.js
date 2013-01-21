@@ -5,6 +5,7 @@ var routesListData
 var routesListMsgTarget
 
 
+
 $('#page-routesList').live('pageshow', function(event, data){
 	if(data.prevPage.attr('id') == 'page-home'){
 		getMyRoutesItems($('#routesListMessage'), getUrlVars()["list"])
@@ -389,6 +390,7 @@ function sendImgur(rambledata, img, messageTarget){
 	//gonna run out of memory in lots of devices.
 
 	showAjaxLoad(true)
+
 	data = JSON.stringify({
 		image: img,
 		name: rambledata.title,
@@ -457,3 +459,4 @@ function deleteImgur(rambledata, imageString, successFunc, messageTarget){
 		}
 	})
 }
+

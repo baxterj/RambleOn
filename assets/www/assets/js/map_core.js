@@ -207,7 +207,7 @@ function updateSearchRoutes(map){
 }
 
 function drawRoutes(data, messageTarget){
-	if(activeMap == maps.searchMap){
+	if(activeMap == maps.searchMap && !spiderfied){
 		clearMarkerArray(routeMarkers)
 
 		routesContent = data.objects
@@ -437,6 +437,9 @@ function resetOMS(map){
 		if(enableNotesPhotos){
 			updateNotesPhotos(activeMap)
 		}
+		// if(activeMap == maps.searchMap){
+		// 	updateSearchRoutes(activeMap)
+		// }
 	})
 }
 
