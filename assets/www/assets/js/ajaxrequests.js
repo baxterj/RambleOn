@@ -152,7 +152,7 @@ function createRouteListItem(route){
 	html += '</div>\n'
 	html += '<div class="routelist_keywords">Keywords: ' + stringifyArray(route.keywords)+'</div>\n'
 	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
-	html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
+	//html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
 	html += '</a></li>\n'
 	return html
 }
@@ -346,6 +346,14 @@ function successDelImage(data, messageTarget){
 	messageTarget.html('Image Deleted Succesfully')
 	alert('Image Deleted Succesfully')
 	$.mobile.changePage('notesPhotos.html')
+}
+
+function sendTrackData(speed, altitude){
+	var data = JSON.stringify({
+		'speed': speed,
+		'altitude': altitude
+	})
+	sendAjax(data, null, null, 'trackdata', 'POST', true)
 }
 
 //Generic function for sending ajax requests, pass error message display target

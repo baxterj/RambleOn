@@ -52,7 +52,7 @@ var routesContent = []
 var noteMarkers = new google.maps.MVCArray();
 var imageMarkers = new google.maps.MVCArray();
 var routeMarkers = new google.maps.MVCArray();
-//var createMarkers = new google.maps.MVCArray();
+
 var createLine
 var geoLocID
 
@@ -66,6 +66,12 @@ var routeRefreshTimer
 var recordPositionTimer
 var recordPosition = false
 
+var trackDataEnabled = false
+var trackDataTimer = setTimeout("trackDataEnabled = true", 30000)
+
+var speedMeasurements = []
+var altitudeMeasurements = []
+
 var firstRoutePreview = true
 
 var deleteMessageTarget
@@ -77,7 +83,7 @@ var omsOptions = {
 	markersWontHide: true,
 	keepSpiderfied: true,
 	nearbyDistance: 30,
-	circleSpiralSwitchover: Infinity
+	circleSpiralSwitchover: Infinity //always use a circle
 }
 
 $('#page-viewRoute').live('pageshow', function(event){
@@ -861,21 +867,31 @@ function getPositionSuccess(position){
 }
 
 function trackingPositionSuccess(position){
-		if(createLine != null && recordPosition){
-			if(position.coords.accuracy < 20){//only record if estimated gps accuracy is within 20 meters
-				activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-				createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
-				recordPosition = false
+	if(createLine != null && recordPosition){
+		if(position.coords.accuracy < 20){//only record if estimated gps accuracy is within 20 meters
+			activeMap.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+			createLine.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+			recordPosition = false
 
-				//save the tracked route in case of crash
-				saveCreateLine()
+			//save the tracked route in case of crash
+			saveCreateLine()
 
-				//wait 10 seconds until do this again
-				recordPositionTimer = setTimeout("recordPosition = true", 10000);
-			}
+			//wait 10 seconds until do this again
+			recordPositionTimer = setTimeout("recordPosition = true", 10000); //10 seconds
 		}
+	}
 
-		currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
+	if(position.coords.accuracy < 20){
+		speedMeasurements.push(position.coords.speed)
+		altitudeMeasurements.push(position.coords.altitude)
+
+		if(trackDataEnabled){
+			sendTrackData(avgArray(speedMeasurements), avgArray(altitudeMeasurements))
+			clearTrackAverages()
+		}
+	}
+
+	currentPositionMarker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude))
 
 }
 
@@ -924,9 +940,9 @@ function goToPositionSuccess(position){
 
 function getPositionError(error) {
 	showAjaxLoad(false)
-	alert('finding location failed:\n'
-		+'code: '    + error.code    + '\n' +
-		'message: ' + error.message + '\n');
+	// alert('finding location failed:\n'
+	// 	+'code: '    + error.code    + '\n' +
+	// 	'message: ' + error.message + '\n');
 }
 
 function startPositionWatch(createRoute){
@@ -938,6 +954,7 @@ function startPositionWatch(createRoute){
 		createLine.setMap(activeMap)
 	}
 
+	clearTrackAverages()
 	navigator.geolocation.clearWatch(geoLocID);
 	geoLocID = null
 	geoLocID = navigator.geolocation.watchPosition(trackingPositionSuccess, getPositionError, geoLocOptions);
@@ -998,4 +1015,11 @@ function doCreationReset(){
 		pausePositionWatch(true)
 		$('#pauseTrack').val('pause').slider('refresh')	
 	}
+}
+
+function clearTrackAverages(){
+	speedMeasurements = []
+	altitudeMeasurements = []
+	trackDataEnabled = false
+	trackDataTimer = setTimeout("trackDataEnabled = true", 30000) //30 seconds
 }
