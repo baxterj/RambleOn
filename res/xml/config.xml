@@ -32,7 +32,7 @@
     <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
     <access origin=".*"/>
 
-    <log level="DEBUG"/>
+    <!--log level="DEBUG"/-->
     <preference name="useBrowserHistory" value="false" />
     <preference name="exit-on-suspend" value="false" />
 <plugins>

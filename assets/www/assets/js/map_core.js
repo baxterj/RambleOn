@@ -877,7 +877,7 @@ function trackingPositionSuccess(position){
 			saveCreateLine()
 
 			//wait 10 seconds until do this again
-			recordPositionTimer = setTimeout("recordPosition = true", 10000); //10 seconds
+			recordPositionTimer = setTimeout("recordPosition = true", 15000); //10 seconds
 		}
 	}
 

@@ -136,17 +136,18 @@ function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 
 function showAjaxLoad(bool){
 	if(bool){
-		if(queuedRequests <= 0){
-			queuedRequests = 1
-		}else{
+		// if(queuedRequests <= 0){
+		// 	queuedRequests = 1
+		// }else{
 			queuedRequests++
-		}
+		//}
 		$.mobile.activePage.find('[data-role="header"]').append('<div class="ajax_load"></div>')
 	}else{
+		console.log(queuedRequests)
 		queuedRequests--
-		if(queuedRequests <= 0){
+	//	if(queuedRequests <= 0){
 			$.mobile.activePage.find('[data-role="header"] .ajax_load').remove()	
-		}
+	//	}
 		
 	}
 }
@@ -237,7 +238,7 @@ function createDeleteButton(api, id, messageTarget, imageString){
 
 
 function isUserClass(user){
-	if (window.localStorage.getItem('user') == user){
+	if (window.localStorage.getItem('user').toLowerCase() == user.toLowerCase()){
 		return ' selfUser'
 	}else{
 		return ''
@@ -245,7 +246,7 @@ function isUserClass(user){
 }
 
 function userOwns(user){
-	return window.localStorage.getItem('user') == user
+	return window.localStorage.getItem('user').toLowerCase() == user.toLowerCase()
 }
 
 function avgArray(arr){
