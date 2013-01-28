@@ -137,22 +137,27 @@ $('#page-home, #page-create, #page-routesList').live('pageshow', function(event,
 
 
 function findMapLocation(location, messageTarget){
-	geocoder = new google.maps.Geocoder();
-	var oldLatLngBounds = activeMap.getBounds()
-	geocoder.geocode( { 
-		address: location,
-		region: 'gb',
-		}, 
-		function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-				activeMap.fitBounds(results[0].geometry.viewport)
-				if(oldLatLngBounds.equals(activeMap.getBounds())){
-					activeMap.panBy(0, 1)//refresh map
+	if(location != null && location != ''){
+		geocoder = new google.maps.Geocoder();
+		var oldLatLngBounds = activeMap.getBounds()
+		geocoder.geocode( { 
+			address: location,
+			region: 'gb',
+			}, 
+			function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					activeMap.fitBounds(results[0].geometry.viewport)
+					if(oldLatLngBounds.equals(activeMap.getBounds())){
+						activeMap.panBy(0, 1)//refresh map
+					}
+				}else{
+					messageTarget.html('Could not find address')
 				}
-			}else{
-				messageTarget.html('Could not find address')
-			}
-		});
+			});
+	}else{
+		activeMap.panBy(0, 1)//refresh map
+	}
+	
 
 }
 
