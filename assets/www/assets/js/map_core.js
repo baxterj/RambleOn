@@ -136,7 +136,7 @@ $('#page-home, #page-create, #page-routesList').live('pageshow', function(event,
 
 
 
-function findMapLocation(distance, units, location, messageTarget){
+function findMapLocation(location, messageTarget){
 	geocoder = new google.maps.Geocoder();
 	var oldLatLngBounds = activeMap.getBounds()
 	geocoder.geocode( { 
@@ -145,8 +145,7 @@ function findMapLocation(distance, units, location, messageTarget){
 		}, 
 		function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK) {
-				activeMap.setCenter(results[0].geometry.location);
-				activeMap.setZoom(calcSearchZoom(distance, units))
+				activeMap.fitBounds(results[0].geometry.viewport)
 				if(oldLatLngBounds.equals(activeMap.getBounds())){
 					activeMap.panBy(0, 1)//refresh map
 				}
