@@ -321,8 +321,10 @@ function deleteItem(api, id, imageString){
 		}else if(api == 'route'){
 			successFunc = successDelRoute
 		}
-
-		sendAjax(data, deleteMessageTarget, successFunc, 'delete'+api, 'POST', true)
+		if(api != 'image'){//if image, sendAjax is called once imgur delete is successful
+			sendAjax(data, deleteMessageTarget, successFunc, 'delete'+api, 'POST', true)	
+		}
+		
 	}
 	
 }
@@ -361,6 +363,9 @@ function sendTrackData(speed, altitude){
 //and function for what to do on success
 function sendAjax(data, messageTarget, successFunc, apiLocation, reqType, useAuth){
 	showAjaxLoad(true)
+	if(messageTarget != null){
+		messageTarget.html('&nbsp;')
+	}
 	var auth=''
 	if(useAuth){
 		user = window.localStorage.getItem("user")
@@ -399,6 +404,9 @@ function sendImgur(rambledata, img, messageTarget){
 	//gonna run out of memory in lots of devices.
 
 	showAjaxLoad(true)
+	if(messageTarget != null){
+		messageTarget.html('&nbsp;')
+	}
 
 	data = JSON.stringify({
 		image: img,
@@ -435,6 +443,9 @@ function sendImgur(rambledata, img, messageTarget){
 
 function deleteImgur(rambledata, imageString, successFunc, messageTarget){
 	showAjaxLoad(true)
+	if(messageTarget != null){
+		messageTarget.html('&nbsp;')
+	}
 	var imgData = imageString.split('|')
 	var url = 'https://api.imgur.com/3/image/'+imgData[1]+'?_fake_status=200'
 

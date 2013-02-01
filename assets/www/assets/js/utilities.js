@@ -14,6 +14,9 @@ $(document).on('pageinit','[data-role=page]', function(){
 
 
 function validateField(field, fieldName, messageTarget, rule, required, min, max){
+	if(messageTarget != null){
+		messageTarget.html('&nbsp;')
+	}
 	var text = field.val()
 	if(required){
 		if (text==null || text==''){
