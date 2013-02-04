@@ -465,7 +465,6 @@ function createMapRoute(){
 	maps.routeMap = new google.maps.Map(document.getElementById("map_canvas_route"),
 		mapOptions);
 
-	enableNotesPhotos = true
 
 	resetOMS(maps.routeMap)
 	
@@ -509,7 +508,6 @@ function createMapByHand(){
 		maps.createMap.setZoom(oldZoom)
 	}
 
-	enableNotesPhotos = true
 
 	resetOMS(maps.createMap)
 
@@ -567,7 +565,6 @@ function createMapTracked(){
 		maps.trackedMap.setZoom(oldZoom)
 	}
 
-	enableNotesPhotos = true
 
 	resetOMS(maps.trackedMap)
 
@@ -607,7 +604,7 @@ function createMapSearch(){
 		oldCenter = maps.searchMap.getCenter()
 		oldZoom = maps.searchMap.getZoom()
 	}else{
-		enableNotesPhotos = false
+		//enableNotesPhotos = false
 	}
 
 	maps.searchMap = new google.maps.Map(document.getElementById("map_canvas_search"),
@@ -677,7 +674,7 @@ function createMapNotesPhotos(){
 		newItemMarker.setMap(maps.noteMap)
 	}else{
 		//first page visit for notes and photos
-		enableNotesPhotos = true
+		//enableNotesPhotos = true
 
 		goToCurrentPosition()
 		newItemMarker = new google.maps.Marker({
