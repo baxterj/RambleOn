@@ -249,18 +249,17 @@ function drawRoutes(data, messageTarget){
 
 //used for search map
 function showRouteContent(marker){
+	var data = routesContent[marker.num]//this will contain info & first pathpoint
+
+	getRoute(data.id, loadSearchRoute)
+
 	if(maps.searchMap.route != null){
 		maps.searchMap.route.setMap(null)
 	}
 	
-
-	var data = routesContent[marker.num]
 	maps.searchMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
-	maps.searchMap.route = makePolyLine('#DD0000', false)
-	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
-	buildPathFromCoords(data, maps.searchMap.route)
-	setPathEndMarker(data, maps.searchMap)
 	maps.searchMap.setZoom(15)
+
 	$.mobile.activePage.find('#search-routeInfo p').html(routeInfoHTML(data))
 	createFavDoneButtons(data.id, data.fav, data.done)
 	$.mobile.activePage.find('.search_routelink a').attr('href', 'route.html?id='+data.id)
@@ -268,10 +267,14 @@ function showRouteContent(marker){
 		firstRoutePreview = false
 		$.mobile.activePage.find('#search-routeInfo').popup("open", { positionTo: '#search-popupbtn' })
 	}
-	
 
+}
 
-
+function loadSearchRoute(data, messageTarget){
+	maps.searchMap.route = makePolyLine('#FF0000', false)
+	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
+	buildPathFromCoords(data, maps.searchMap.route)
+	setPathEndMarker(data, maps.searchMap)
 }
 
 function drawNotes(data, messageTarget){

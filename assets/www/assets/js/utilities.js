@@ -1,5 +1,3 @@
-var queuedRequests = 0
-
 function stripPX(inp){
 	return inp.split('px', [0])
 }
@@ -139,19 +137,9 @@ function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 
 function showAjaxLoad(bool){
 	if(bool){
-		// if(queuedRequests <= 0){
-		// 	queuedRequests = 1
-		// }else{
-			queuedRequests++
-		//}
 		$.mobile.activePage.find('[data-role="header"]').append('<div class="ajax_load"></div>')
 	}else{
-		console.log(queuedRequests)
-		queuedRequests--
-	//	if(queuedRequests <= 0){
-			$.mobile.activePage.find('[data-role="header"] .ajax_load').remove()	
-	//	}
-		
+		$.mobile.activePage.find('[data-role="header"] .ajax_load').remove()	
 	}
 }
 

@@ -174,6 +174,7 @@ function getRoute(id, mapUpdateFunction){
 	sendAjax(null, null, mapUpdateFunction, 'route/'+id, 'GET', true)
 }
 
+
 function changeFav(id, bool){
 	var data = JSON.stringify({
 		'route': id,
@@ -209,7 +210,7 @@ function getSearchRoutes(map){
 		}
 	}
 	
-	sendAjax(data, null, drawRoutes, 'route', 'GET', true)
+	sendAjax(data, null, drawRoutes, 'route', 'GET', true)//TODO 'searchroute api'
 }
 
 function sendNewRoute(line, name, priv, keywords){
