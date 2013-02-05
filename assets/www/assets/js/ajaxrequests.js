@@ -148,8 +148,8 @@ function createRouteListItem(route){
 	html += '<div class="routelist_title">' + route.name + '</div>\n'
 	html += '<div class="routelist_owner'+isUserClass(route.owner.username)+'">Owner: ' + route.owner.username + '</div>\n'
 	html += '<div class="routelist_icons">\n'
-	html += '<div class="routelist_fav fav_'+route.fav+'"></div>\n'
-	html += '<div class="routelist_done done_'+route.done+'"></div>\n'
+	html += '<div class="routelist_fav fav_'+route.fav+'">'+route.favCount+'</div>\n'
+	html += '<div class="routelist_done done_'+route.done+'">'+route.doneCount+'</div>\n'
 	html += '</div>\n'
 	html += '<div class="routelist_keywords">Keywords: ' + stringifyArray(route.keywords)+'</div>\n'
 	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
@@ -210,7 +210,7 @@ function getSearchRoutes(map){
 		}
 	}
 	
-	sendAjax(data, null, drawRoutes, 'route', 'GET', true)//TODO 'searchroute api'
+	sendAjax(data, null, drawRoutes, 'searchroute', 'GET', true)
 }
 
 function sendNewRoute(line, name, priv, keywords){

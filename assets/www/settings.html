@@ -48,10 +48,12 @@
 				<script type="text/javascript">
 					document.getElementById('settingsUserName').innerHTML = window.localStorage.getItem("user")
 				</script>
-				<div style="margin-bottom:30px" data-role="controlgroup">
-					<a href="#" onClick="logout()" data-theme="a" data-role="button">Logout</a>
-					<a href="#" onClick="navigator.app.exitApp()" data-theme="a" data-role="button" >Exit App</a>
-				</div>
+				<!--div style="margin-bottom:30px" data-role="controlgroup"-->
+					<a href="#" onClick="logout()" data-theme="d" data-role="button">Logout</a>
+					<a href="#" onClick="navigator.app.exitApp()" data-theme="d" data-role="button" >Exit App</a>
+				<!--/div-->
+				<h3>Account Management</h3>
+				<a href="http://www.rambleonline.com/" rel="external" data-role="button" data-theme="d">Edit account at RambleOnline.com</a>
 
 				<!--a href="#" onClick="endPositionWatch()" data-role="button" data-theme="a">Kill GPS Tracker</a-->
 			</div>
@@ -61,7 +63,7 @@
 		
 
 		<div data-role="footer" data-id="foo1" class="ui-bar ui-footer" data-position="fixed">
-			<a href="#" onClick="navigator.app.exitApp()" data-icon="delete">Exit</a>
+			<a href="#" onClick="navigator.app.exitApp()" data-theme="d" data-icon="delete">Exit</a>
 		</div><!-- /footer -->
 	</div><!-- /page -->
 

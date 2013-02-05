@@ -70,7 +70,7 @@
 
 		<div data-role="footer" class="ui-bar ui-footer" data-position="fixed">
 
-			<a href="#tracked-menu" id="tracked-menubtn" data-rel="popup" data-mini="true">Menu</a>		
+			<a href="#tracked-menu" id="tracked-menubtn" data-rel="popup" data-mini="true" data-theme="d">Menu</a>		
 			<div data-role="popup" class="popupMenu" id="tracked-menu">
 				<ul data-role="listview" data-inset="true" data-mini="true">
 					<li data-role="divider">Menu</li>
@@ -82,9 +82,9 @@
 			</div>
 
 
-			<a href="#tracked-routeInfo" id="tracked-popupbtn" data-rel="popup" data-position-to="window" data-mini="true">Upload</a>
+			<a href="#tracked-routeInfo" id="tracked-popupbtn" data-rel="popup" data-position-to="window" data-mini="true" data-theme="d">Upload</a>
 			<div data-role="popup" id="tracked-routeInfo" class="popup">
-				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<a href="#" data-rel="back" data-role="button" data-theme="d" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<div style="padding:10px; width:300px">
 					<form>
 						<label for="trackedName" data-mini="true" >Name:</label>
@@ -106,10 +106,10 @@
 			
 		
 
-			<div style="float:right; width:180px">
-				<div style="float:left; margin-right:5px; margin-top:7px; font-size:11pt;">Tracking:</div> <select name="pauseTrack" id="pauseTrack" data-role="slider" data-mini="true">
-					<option value="pause">Pause</option>
-					<option value="track">Track</option>
+			<div class="trackSlider_holder">
+				<div class="trackSlider_text">Slide to start:</div> <select name="pauseTrack" id="pauseTrack" data-role="slider" data-mini="true" data-theme="b" data-track-theme="d" >
+					<option value="pause">Paused</option>
+					<option value="track">Go!</option>
 				</select>
 			</div>
 			
