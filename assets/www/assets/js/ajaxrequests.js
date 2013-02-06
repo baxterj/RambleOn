@@ -20,6 +20,10 @@ $('#page-viewImage').live('pageshow', function(event){
 	setTimeout("getImage(getUrlVars()['id'])", 500); //url vars dont load before this event fires so we wait
 })
 
+$('#sharePage').live('pageshow', function(event){
+	$('#shareTitle').html('Route Title: ' + activeRouteData.name)
+})
+
 
 
 function sendForgot(username, messageTarget){
@@ -143,7 +147,7 @@ function successRoutesList(data, messageTarget){
 }
 
 function createRouteListItem(route){
-	var html = '<li>\n' //data-filtertext="'+stringifyArray(route.keywords)+'">\n'
+	var html = '<li>\n'
 	html += '<a href="route.html?id='+route.id+'">\n'
 	html += '<div class="routelist_title">' + route.name + '</div>\n'
 	html += '<div class="routelist_owner'+isUserClass(route.owner.username)+'">Owner: ' + route.owner.username + '</div>\n'
@@ -151,9 +155,8 @@ function createRouteListItem(route){
 	html += '<div class="routelist_fav fav_'+route.fav+'">'+route.favCount+'</div>\n'
 	html += '<div class="routelist_done done_'+route.done+'">'+route.doneCount+'</div>\n'
 	html += '</div>\n'
-	html += '<div class="routelist_keywords">Keywords: ' + stringifyArray(route.keywords)+'</div>\n'
+	html += '<div class="routelist_keywords">Keywords: ' + route.keywords.join(" ")+'</div>\n'
 	html += '<div class="mapThumb" id="mapThumb'+route.id+'"></div>\n'
-	//html += '<a href="#" onClick="showMapThumbnail('+route.id+')" data-icon="grid" data-iconpos="right" title="Map"></a>\n'
 	html += '</a></li>\n'
 	return html
 }
@@ -206,7 +209,7 @@ function getSearchRoutes(map){
 	var data = 'bounds='+ map.getBounds().toUrlValue()
 	if($('#searchKeywords').val() != ''){
 		if(validateField($('#searchKeywords'), 'Keywords', $('#searchFieldError'), 'alphanum', false, 0, 200)){
-			data += '&filterwords='+stringifyArray($('#searchKeywords').val().split(' '), ',')
+			data += '&filterwords='+ $('#searchKeywords').val().split(' ').join(',')
 		}
 	}
 	
@@ -359,6 +362,22 @@ function sendTrackData(speed, altitude){
 	})
 	sendAjax(data, null, null, 'trackdata', 'POST', true)
 }
+
+function sendShare(data, messageTarget){
+	//data[0,1,2] is message, recipient, email 
+	var data = JSON.stringify({
+		message: data[0],
+		recipient: data[1],
+		email: data[2],
+		route: activeRouteData.id
+	})
+	sendAjax(data, messageTarget, successShare, 'shareroute', 'POST', true)
+}
+
+function successShare(data, messageTarget){
+	$('#shareSendCount').html(parseInt($('#shareSendCount').html())+1)
+}
+
 
 //Generic function for sending ajax requests, pass error message display target
 //and function for what to do on success

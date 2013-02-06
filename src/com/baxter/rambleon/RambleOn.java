@@ -18,5 +18,5 @@ public class RambleOn extends DroidGap {
 //        getMenuInflater().inflate(R.menu.activity_ramble_on, menu);
 //        return true;
 //    }     
-} 
-                           
+}    
+                                         

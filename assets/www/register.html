@@ -42,8 +42,8 @@
 			return validateField($('#regUser'), 'Username', messageTarget, 'alphanum', true, 4, 20) &&
 				validateField($('#regPass'), 'Password', messageTarget, 'password', true, 4, 40) &&
 				validateField($('#regEmail'), 'Email', messageTarget, 'email', true, 6, 254) &&
-				fieldsEqual($('#regPass'), $('#confPass'), 'Passwords', messageTarget) &&
-				fieldsEqual($('#regEmail'), $('#confEmail'), 'Emails', messageTarget)
+				fieldsEqual($('#regPass'), $('#confPass'), 'Passwords', messageTarget, true) &&
+				fieldsEqual($('#regEmail'), $('#confEmail'), 'Emails', messageTarget, false)
 		}
 	</script>
 
