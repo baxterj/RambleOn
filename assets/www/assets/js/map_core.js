@@ -903,8 +903,10 @@ function trackingPositionSuccess(position){
 		altitudeMeasurements.push(position.coords.altitude)
 
 		if(trackDataEnabled){
-			sendTrackData(avgArray(speedMeasurements), avgArray(altitudeMeasurements))
-			clearTrackAverages()
+			if(speedMeasurements.length > 3){
+				sendTrackData(avgArray(speedMeasurements), avgArray(altitudeMeasurements))
+				clearTrackAverages()
+			}	
 		}
 	}
 
