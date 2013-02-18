@@ -135,6 +135,14 @@ function showAjaxLoad(bool){
 	}
 }
 
+function showRecIcon(bool){
+	if(bool){
+		$.mobile.activePage.find('[data-role="header"]').append('<div class="rec_icon"></div>')
+	}else{
+		$.mobile.activePage.find('[data-role="header"] .rec_icon').remove()
+	}
+}
+
 function capturePhoto() {
 	//Store contents of popup's fields, as the page refreshes when return from img selection
 	setImageLocalStorage()

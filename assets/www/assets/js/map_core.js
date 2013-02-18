@@ -129,6 +129,7 @@ $('#page-notesphotos').live('pageshow', function(event){
 //kill gps when not on a relevant page, to save battery
 $('#page-home, #page-create, #page-routesList').live('pageshow', function(event, data){
 	endPositionWatch()
+	trackingPaused = true
 })
 
 // $('#page-viewRoute, #page-searchRoute, #page-createByHand, #page-createTracked, #page-notesphotos').live('orientationchange', function(event){
@@ -596,6 +597,7 @@ function createMapTracked(){
 	
 	goToCurrentPosition()
 	trackCurrentPosition(maps.trackedMap)
+	setTimeout(function(){trackSlideStopped('track')}, 1000)
 
 
 }
@@ -691,7 +693,7 @@ function createMapNotesPhotos(){
 			position: maps.noteMap.getCenter(),
 			title: 'New item created here',
 			map: maps.noteMap,
-			//icon: 'assets/images/routepoint-map-icon.png',
+			icon: 'assets/images/newNotePhoto.png',
 			zIndex: 99989,
 			draggable: true,
 			optimized: false
@@ -920,7 +922,12 @@ function trackingPositionSuccess(position){
 function loadCreateLine(map){
 	if(window.localStorage.getItem('trackingPathString') != null){
 		if(createLine == null){
-			createLine = makePolyLine('#DD0000', true)
+			if ($.mobile.activePage.attr('id') == 'page-createTracked'){
+				createLine = makePolyLine('#DD0000', false)
+			}else{
+				createLine = makePolyLine('#DD0000', true)
+			}
+			
 		}
 		createLine.setMap(map)
 		
@@ -970,7 +977,7 @@ function startPositionWatch(createRoute){
 	if(createRoute){
 		activeMap.setZoom(15)
 		if(createLine == null){
-			createLine = makePolyLine('#DD0000', createRoute)
+			createLine = makePolyLine('#DD0000', false)//createRoute)
 		}
 		createLine.setMap(activeMap)
 	}
@@ -997,21 +1004,27 @@ function pausePositionWatch(pause){
 }
 
 $("#pauseTrack").live("slidestop", function(event, ui) {
-	if($(this).val() == 'track'){
+	trackSlideStopped($(this).val())
+});
+
+function trackSlideStopped(val){
+	if(val == 'track'){
 		if(trackingPaused){
 			if(createLine == null){
 				startPositionWatch(true)
 			}
 			trackingPaused = false
 			pausePositionWatch(false)
+			showRecIcon(true)
 		}
-	}else if($(this).val() == 'pause'){
+	}else if(val == 'pause'){
 		if(!trackingPaused){
 			trackingPaused = true
 			pausePositionWatch(true)
+			showRecIcon(false)
 		}
 	}
-});
+}
 
 function resetCreation(ignoreWarning){
 	if(ignoreWarning){
@@ -1036,6 +1049,7 @@ function doCreationReset(){
 		pausePositionWatch(true)
 		$('#pauseTrack').val('pause').slider('refresh')	
 	}
+	showRecIcon(false)
 }
 
 function clearTrackAverages(){
