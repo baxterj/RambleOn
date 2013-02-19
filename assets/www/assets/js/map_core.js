@@ -259,7 +259,9 @@ function showRouteContent(marker){
 
 	getRoute(data.id, loadSearchRoute)
 
-
+	if(maps.searchMap.route != null){
+		maps.searchMap.route.setMap(null)
+	}
 	
 	maps.searchMap.setCenter(new google.maps.LatLng(data.pathpoints[0].lat, data.pathpoints[0].lng))
 	maps.searchMap.setZoom(15)
@@ -275,10 +277,6 @@ function showRouteContent(marker){
 }
 
 function loadSearchRoute(data, messageTarget){
-	if(maps.searchMap.route != null){
-		maps.searchMap.route.setPath(null)
-		maps.searchMap.route.setMap(null)
-	}
 	maps.searchMap.route = makePolyLine('#FF0000', false)
 	maps.searchMap.route.setMap(maps.searchMap); //assign route poly to route map
 	buildPathFromCoords(data, maps.searchMap.route)
