@@ -1,12 +1,20 @@
+/*
+Remove 'px' from the end of the input string.  Useful with some calculations of height and width
+*/
 function stripPX(inp){
 	return inp.split('px', [0])
 }
 
+/*
+Prevent the footer bar from hiding when the screen is tapped
+*/
 $(document).on('pageinit','[data-role=page]', function(){
 	$('[data-position=fixed]').fixedtoolbar({ tapToggle:false});
 });
 
-
+/*
+Run validation parameters on the input field. Display a suitable message if not passing the test
+*/
 function validateField(field, fieldName, messageTarget, rule, required, min, max){
 	if(messageTarget != null){
 		messageTarget.html('&nbsp;')
@@ -43,6 +51,9 @@ function validateField(field, fieldName, messageTarget, rule, required, min, max
 	return true
 }
 
+/*
+Test a given string against certain named regex rules, return false if a match is not made
+*/
 function testInputRule(rule, text){
 	if(rule == 'alphanum'){
 		var reg = /^([a-zA-Z0-9 _-]*)$/
@@ -60,6 +71,9 @@ function testInputRule(rule, text){
 	return false
 }
 
+/*
+Test for the equality of two fields, optional case sensitivity
+*/
 function fieldsEqual(first, second, setName, messageTarget, caseSensitive){
 	if(!caseSensitive){
 		firstVal = first.val().toLowerCase()
@@ -76,7 +90,10 @@ function fieldsEqual(first, second, setName, messageTarget, caseSensitive){
 	return true
 }
 
-
+/*
+Hides the footer bar if the keyboard is activated, as it pops up to be on top of the keyboard area.
+This gives more screen space above the keyboard
+*/
 var initialScreenSize = window.innerHeight;
 window.addEventListener("resize", function() {
 	if(window.innerHeight < initialScreenSize){
@@ -86,7 +103,9 @@ window.addEventListener("resize", function() {
 	}
 });
 
-
+/*
+Gets a hashmap of the query string.  access as v = getUrlVars()['username']
+*/
 function getUrlVars()
 {
     var vars = [], hash;
@@ -100,7 +119,9 @@ function getUrlVars()
     return vars;
 }
 
-
+/*
+Return 'Yes' or 'No' for true and false, useful for generating HTML sections
+*/
 function yesTrue(bool){
 	if(bool){
 		return 'Yes'
@@ -109,10 +130,16 @@ function yesTrue(bool){
 	}
 }
 
+/*
+Set the title of the current screen
+*/
 function pageHeader(newText){
 	$.mobile.activePage.find('[data-role="header"] h1').html(newText)
 }
 
+/*
+Generate route info html from a data object
+*/
 function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 	var out = ''
 	out += '<b>Name: </b>' + data.name + '<br />\n'
@@ -122,11 +149,12 @@ function routeInfoHTML(data){ //takes a route object from api/v1/route/#/
 	out += '<b>Last Update: </b>' + data.update_date + '<br />\n'
 	out += '<b>Keywords: </b>' + data.keywords.join(" ") + '<br />\n'
 
-
-
 	return out
 }
 
+/*
+Display or hide the ajax loading wheel at the top of the screen
+*/
 function showAjaxLoad(bool){
 	if(bool){
 		$.mobile.activePage.find('[data-role="header"]').append('<div class="ajax_load"></div>')
@@ -135,6 +163,9 @@ function showAjaxLoad(bool){
 	}
 }
 
+/*
+Display or hide the recording icon at the top of the screen
+*/
 function showRecIcon(bool){
 	if(bool){
 		$.mobile.activePage.find('[data-role="header"]').append('<div class="rec_icon"></div>')
@@ -143,6 +174,9 @@ function showRecIcon(bool){
 	}
 }
 
+/*
+Use Phonegap API to capture an image from the camera
+*/
 function capturePhoto() {
 	//Store contents of popup's fields, as the page refreshes when return from img selection
 	setImageLocalStorage()
@@ -157,17 +191,25 @@ function capturePhoto() {
 		});
 }
 
+/*
+Load the captured photo into the HTML form, ready for submission
+*/
 function capturePhotoSuccess(imageData){
 	$.mobile.activePage.find('.imageSrc').html(imageData)
 	$.mobile.activePage.find('.imageStatus').html('Ready for upload')
 	$('#notesPhotos-newImage').popup('open')
 }
 
+/*
+Display a warning message explaining that photo capture has failed
+*/
 function capturePhotoFail(failMessage){
 	$.mobile.activePage.find('.imageStatus').html('Photo capture failed:\n' + failMessage)
 }
 
-
+/*
+Load an image from the phone's gallery.
+*/
 function findPhoto() {
 	//Store contents of popup's fields, as the page refreshes when return from img selection
 	setImageLocalStorage()
@@ -185,16 +227,25 @@ function findPhoto() {
 		});
 }
 
+/*
+Load selected image into form HTML, ready for submission
+*/
 function findPhotoSuccess(imageData){
 	$.mobile.activePage.find('.imageSrc').html(imageData)
 	$.mobile.activePage.find('.imageStatus').html('Ready for upload')
 	$('#notesPhotos-newImage').popup('open')
 }
 
+/*
+Alert user that image selection has failed
+*/
 function findPhotoFail(failMessage){
 	$.mobile.activePage.find('.imageStatus').html('Photo slect failed:\n' + failMessage)
 }
 
+/*
+Reset the photo upload popup (and any stored values).  Happens on upload success
+*/
 function clearPhotoUploadPopup(){
 	clearImageLocalStorage()
 	$('#imageFile').html('')
@@ -203,30 +254,46 @@ function clearPhotoUploadPopup(){
 	$('#imageTitle').val('')
 }
 
+/*
+Store contents of the image form.  They need to be re-inserted on return from the camera
+or gallery apps, as the form page refreshes
+*/
 function setImageLocalStorage(){
 	window.localStorage.setItem("imageTitle", $('#imageTitle').val())
 	window.localStorage.setItem("imageText", $('#imageText').val())
 	window.localStorage.setItem("imagePrivate", $('#imagePrivate option:selected').val())
 }
 
+/*
+Remove stored image upload form values from local storage
+*/
 function clearImageLocalStorage(){
 	window.localStorage.setItem("imageTitle", '')
 	window.localStorage.setItem("imageText", '')
 	window.localStorage.setItem("imagePrivate", '')
 }
 
+/*
+Restore image upload form values from local storage
+*/
 function fillImgPopup(){
 	$('#imageTitle').val(window.localStorage.getItem("imageTitle"))
 	$('#imageText').val(window.localStorage.getItem("imageText"))
 	$('#imagePrivate').val(window.localStorage.getItem("imagePrivate")+"").slider('refresh')
 }
 
+/*
+Create a delete button for an item, this might be a route, image, or note
+*/
 function createDeleteButton(api, id, messageTarget, imageString){
 	deleteMessageTarget = messageTarget
 	var clickJS = 'deleteItem(\''+api + '\', '+ id+', \''+imageString+'\')'
 	$.mobile.activePage.find('.deleteButton').attr('onClick', clickJS)
 }
 
+/*
+Add a new form section to the share page, for a new recipeint's details
+*/
 function addRecipient(){
 	$.mobile.activePage.find('#shareForm').append('<div class="shareDetails">\n'+
 		'Name: <input type="text" name="regUser" class="shareUser ui-input-text ui-body-c ui-corner-all ui-shadow-inset ui-mini" data-mini="true">\n'+
@@ -236,10 +303,16 @@ function addRecipient(){
 	$.mobile.activePage.find('.shareDetails :last').find('a').button()
 }
 
+/*
+Remove the selected recipient's details from the share page
+*/
 function removeRecipient(targetBtn){
 	$(targetBtn).parent().remove()
 }
 
+/*
+Go to the page for route sharing if the route is not private
+*/
 function goToSharePage(){
 	if(activeRouteData.private){
 		alert('Cannot share private route')
@@ -248,7 +321,10 @@ function goToSharePage(){
 	}
 }
 
-
+/*
+return a class if the currently logged in user matches the input string.
+This is to change the font colour of the user's own username in route details etc
+*/
 function isUserClass(user){
 	if (window.localStorage.getItem('user').toLowerCase() == user.toLowerCase()){
 		return ' selfUser'
@@ -257,10 +333,16 @@ function isUserClass(user){
 	}
 }
 
+/*
+Return true if the currently logged in user matches the input string
+*/
 function userOwns(user){
 	return window.localStorage.getItem('user').toLowerCase() == user.toLowerCase()
 }
 
+/*
+Get the mean average of an array
+*/
 function avgArray(arr){
 	var i
 	var total = 0
